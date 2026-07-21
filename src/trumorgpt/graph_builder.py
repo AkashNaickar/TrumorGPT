@@ -56,11 +56,13 @@ class KnowledgeGraphBuilder:
         self, 
         ollama_url: str = "http://localhost:11434", 
         ollama_model: str = "llama3.1:8b",
-        openai_api_key: str = None
+        openai_api_key: str = None,
+        gemini_api_key: str = None
     ):
         self.ollama_url = ollama_url
         self.ollama_model = ollama_model
         self.openai_api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
+        self.gemini_api_key = gemini_api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
     def extract_triples_ollama(self, query_text: str) -> List[Dict[str, str]]:
         """Extracts triples using local Ollama (llama3.1:8b)."""
@@ -91,6 +93,36 @@ class KnowledgeGraphBuilder:
             pass
         return None
 
+    def extract_triples_gemini(self, query_text: str) -> List[Dict[str, str]]:
+        """Extracts triples using Google Gemini 2.0 Flash API."""
+        if not self.gemini_api_key:
+            return None
+        
+        try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={self.gemini_api_key}"
+            prompt = FEW_SHOT_PROMPT_TEMPLATE.format(query_text=query_text)
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {"temperature": 0.1}
+            }
+            response = requests.post(url, json=payload, timeout=15)
+            print(f"[Gemini API] Status: {response.status_code}")
+            if response.status_code == 200:
+                raw_text = response.json()["candidates"][0]["content"]["parts"][0]["text"]
+                triples = self._parse_json_triples(raw_text)
+                if triples:
+                    normalized = []
+                    for t in triples:
+                        h = t.get("head") or t.get("subject") or ""
+                        r = t.get("relation") or t.get("predicate") or ""
+                        v = t.get("tail") or t.get("object") or ""
+                        if h and r and v:
+                            normalized.append({"head": str(h), "relation": str(r), "tail": str(v)})
+                    if normalized:
+                        return normalized
+        except Exception as e:
+            print(f"[Gemini API] Error: {e}")
+        return None
 
     def extract_triples_openai(self, query_text: str) -> List[Dict[str, str]]:
         """Extracts triples using OpenAI GPT-4 API."""
@@ -179,22 +211,35 @@ class KnowledgeGraphBuilder:
     def build_knowledge_graph(self, query_text: str) -> Dict[str, Any]:
         """
         Executes knowledge graph construction pipeline.
-        Tries Ollama (LLaMA 3.1 8B) first -> OpenAI GPT-4 -> Rule-based Fallback.
+        Tries Gemini 1.5 Flash first -> Ollama (LLaMA 3.1 8B) -> OpenAI GPT-4 -> Rule-based Fallback.
         """
-        triples = self.extract_triples_ollama(query_text)
-        source = "Ollama (LLaMA 3.1:8B)"
+        triples = None
+        source = None
 
-        # Check if Ollama failed to extract a relation key (like missing "is_good_for")
-        if triples and any(t.get("relation") in ["affects", "has_effect_on"] for t in triples):
-            fallback_triples = self.extract_triples_fallback(query_text)
-            if any(t.get("relation") == "is_good_for" for t in fallback_triples):
-                triples = fallback_triples
-                source = "Rule-based Health NLP Extractor (Enhanced)"
+        # 1. Try Google Gemini first (if API key present)
+        triples = self.extract_triples_gemini(query_text)
+        if triples:
+            source = "Google Gemini 1.5 Flash"
 
+        # 2. Fallback to Ollama (LLaMA 3.1 8B)
+        if not triples:
+            triples = self.extract_triples_ollama(query_text)
+            if triples:
+                source = "Ollama (LLaMA 3.1:8B)"
+                # Check if Ollama failed to extract a relation key (like missing "is_good_for")
+                if any(t.get("relation") in ["affects", "has_effect_on"] for t in triples):
+                    fallback_triples = self.extract_triples_fallback(query_text)
+                    if any(t.get("relation") == "is_good_for" for t in fallback_triples):
+                        triples = fallback_triples
+                        source = "Rule-based Health NLP Extractor (Enhanced)"
+
+        # 3. Fallback to OpenAI GPT-4
         if not triples:
             triples = self.extract_triples_openai(query_text)
-            source = "OpenAI GPT-4"
+            if triples:
+                source = "OpenAI GPT-4"
 
+        # 4. Final fallback to rule-based extractor
         if not triples:
             triples = self.extract_triples_fallback(query_text)
             source = "Rule-based Health NLP Extractor"

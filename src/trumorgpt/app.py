@@ -8,6 +8,12 @@ Exposes REST API endpoints:
 """
 
 import os
+from dotenv import load_dotenv
+
+# Load .env file (GEMINI_API_KEY, etc.) from project root
+_project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+load_dotenv(os.path.join(_project_root, ".env"))
+
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
