@@ -72,15 +72,25 @@ class KnowledgeGraphBuilder:
             "options": {"temperature": 0.1}
         }
         try:
-            response = requests.post(f"{self.ollama_url}/api/generate", json=payload, timeout=5)
+            response = requests.post(f"{self.ollama_url}/api/generate", json=payload, timeout=12)
             if response.status_code == 200:
                 raw_text = response.json().get("response", "")
                 triples = self._parse_json_triples(raw_text)
                 if triples:
-                    return triples
+                    # Normalize keys (subject -> head, predicate -> relation, object -> tail)
+                    normalized = []
+                    for t in triples:
+                        h = t.get("head") or t.get("subject") or ""
+                        r = t.get("relation") or t.get("predicate") or ""
+                        v = t.get("tail") or t.get("object") or ""
+                        if h and r and v:
+                            normalized.append({"head": str(h), "relation": str(r), "tail": str(v)})
+                    if normalized:
+                        return normalized
         except Exception:
             pass
         return None
+
 
     def extract_triples_openai(self, query_text: str) -> List[Dict[str, str]]:
         """Extracts triples using OpenAI GPT-4 API."""
