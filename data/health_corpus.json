@@ -1,0 +1,44 @@
+{
+  "articles": [
+    {
+      "id": 1,
+      "topic": "COVID-19 & Vaccines",
+      "text": "mRNA vaccines developed by Pfizer-BioNTech and Moderna significantly reduce the risk of severe COVID-19 infection, hospitalization, and death. The CDC and FDA recommend updated booster shots for individuals aged 6 months and older. Clinical trials demonstrate strong antibody response against emerging SARS-CoV-2 variants."
+    },
+    {
+      "id": 2,
+      "topic": "COVID-19 & Treatments",
+      "text": "Paxlovid is an FDA-authorized oral antiviral treatment for mild-to-moderate COVID-19 in patients at high risk of progression to severe disease. Ivermectin and hydroxychloroquine have been extensively evaluated in randomized controlled trials and failed to show clinical efficacy in treating COVID-19."
+    },
+    {
+      "id": 3,
+      "topic": "Vaccine Safety & Side Effects",
+      "text": "Myocarditis and pericarditis are extremely rare side effects associated with mRNA COVID-19 vaccines, primarily observed in young males. The CDC reports that the risk of heart inflammation from COVID-19 infection itself is significantly higher than the risk from vaccination."
+    },
+    {
+      "id": 4,
+      "topic": "Cardiology & Diet",
+      "text": "Maintaining a balanced diet low in saturated fats and refined sugars helps regulate blood pressure and blood glucose levels. Regular cardiovascular exercise lowers the risk of coronary heart disease, stroke, and type 2 diabetes mellitus according to the American Heart Association."
+    },
+    {
+      "id": 5,
+      "topic": "Public Health Policy & Infodemics",
+      "text": "Public health campaigns emphasize accurate health communications to combat digital infodemics during epidemics. Misinformation regarding vaccine mandates and unproven remedies spreads rapidly across social media platforms, leading to vaccine hesitancy and public confusion."
+    },
+    {
+      "id": 6,
+      "topic": "Influenza & Respiratory Viruses",
+      "text": "Annual influenza vaccination is recommended for all persons aged 6 months and older. Flu vaccines prevent millions of illnesses and doctor visits each year. Co-infection of influenza and respiratory syncytial virus (RSV) increases respiratory distress in elderly populations."
+    },
+    {
+      "id": 7,
+      "topic": "Diabetes Management",
+      "text": "Type 2 diabetes management involves continuous glucose monitoring, healthy nutrition, physical activity, and prescribed medications such as Metformin or GLP-1 receptor agonists. Proper glycaemic control prevents long-term diabetic neuropathy and renal complications."
+    },
+    {
+      "id": 8,
+      "topic": "Epidemiology & Outbreaks",
+      "text": "Epidemiological surveillance systems track viral transmission dynamics, reproduction numbers (R0), and genomic mutations. Non-pharmaceutical interventions such as contact tracing, ventilation improvements, and mask wearing reduce community transmission during viral outbreaks."
+    }
+  ]
+}

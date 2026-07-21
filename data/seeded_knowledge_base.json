@@ -1,0 +1,83 @@
+{
+  "knowledge_graphs": [
+    {
+      "graph_id": "kg_covid_vaccines_01",
+      "source": "DBpedia / CDC Verified Data",
+      "topic": "mRNA Vaccine Efficacy",
+      "triples": [
+        {"head": "SARS-CoV-2", "relation": "causes", "tail": "COVID-19"},
+        {"head": "COVID-19", "relation": "causes", "tail": "Severe Hospitalization"},
+        {"head": "mRNA Vaccine", "relation": "reduces_risk_of", "tail": "Severe Hospitalization"},
+        {"head": "CDC", "relation": "recommends", "tail": "mRNA Vaccine"},
+        {"head": "FDA", "relation": "approves", "tail": "mRNA Vaccine"},
+        {"head": "Pfizer-BioNTech", "relation": "manufactures", "tail": "mRNA Vaccine"},
+        {"head": "Moderna", "relation": "manufactures", "tail": "mRNA Vaccine"}
+      ]
+    },
+    {
+      "graph_id": "kg_ivermectin_02",
+      "source": "DBpedia / PolitiFact Verified Data",
+      "topic": "Ivermectin Inefficacy for COVID-19",
+      "triples": [
+        {"head": "Ivermectin", "relation": "is_approved_for", "tail": "Parasitic Infections"},
+        {"head": "Ivermectin", "relation": "failed_clinical_trials_for", "tail": "COVID-19"},
+        {"head": "FDA", "relation": "does_not_approve", "tail": "Ivermectin for COVID-19"},
+        {"head": "Paxlovid", "relation": "is_authorized_treatment_for", "tail": "COVID-19"}
+      ]
+    },
+    {
+      "graph_id": "kg_myocarditis_03",
+      "source": "DBpedia / CDC Safety Studies",
+      "topic": "Vaccine Side Effects vs Disease Risks",
+      "triples": [
+        {"head": "mRNA Vaccine", "relation": "associated_with", "tail": "Myocarditis"},
+        {"head": "Myocarditis", "relation": "classified_as", "tail": "Rare Side Effect"},
+        {"head": "COVID-19 Infection", "relation": "causes_higher_rate_of", "tail": "Myocarditis"}
+      ]
+    },
+    {
+      "graph_id": "kg_diabetes_diet_04",
+      "source": "DBpedia / Medical Guidelines",
+      "topic": "Dietary Management of Diabetes",
+      "triples": [
+        {"head": "Balanced Diet", "relation": "helps_manage", "tail": "Type 2 Diabetes"},
+        {"head": "Balanced Diet", "relation": "regulates", "tail": "Blood Glucose Level"},
+        {"head": "Cardiovascular Exercise", "relation": "lowers_risk_of", "tail": "Coronary Heart Disease"},
+        {"head": "Metformin", "relation": "is_prescribed_treatment_for", "tail": "Type 2 Diabetes"}
+      ]
+    },
+    {
+      "graph_id": "kg_flumandates_05",
+      "source": "DBpedia / Public Health Policies",
+      "topic": "Public Health Mandates & Misinformation",
+      "triples": [
+        {"head": "Florida Legislation", "relation": "blocked", "tail": "Vaccine Mandates"},
+        {"head": "Ron DeSantis", "relation": "signed", "tail": "Florida Legislation"},
+        {"head": "Vaccine Mandates", "relation": "remained", "tail": "Voluntary in Florida"},
+        {"head": "CDC Data 2021", "relation": "confirmed", "tail": "Higher COVID Deaths in 2021 than 2020"}
+      ]
+    },
+    {
+      "graph_id": "kg_pediatric_covid_06",
+      "source": "DBpedia / CDC Pediatric Guidelines",
+      "topic": "Pediatric COVID-19 Health Risks",
+      "triples": [
+        {"head": "COVID-19", "relation": "causes_respiratory_illness_in", "tail": "Children"},
+        {"head": "COVID-19", "relation": "is_harmful_disease_for", "tail": "Children"},
+        {"head": "COVID-19", "relation": "increases_risk_of", "tail": "Pediatric Hospitalization"},
+        {"head": "CDC", "relation": "recommends_vaccination_for", "tail": "Children"}
+      ]
+    },
+    {
+      "graph_id": "kg_oncology_covid_07",
+      "source": "NCI / CDC Verified Oncology Guidelines",
+      "topic": "COVID-19 & Cancer Etiology",
+      "triples": [
+        {"head": "COVID-19", "relation": "does_not_cause", "tail": "Cancer"},
+        {"head": "SARS-CoV-2", "relation": "does_not_cause", "tail": "Cancer"},
+        {"head": "mRNA Vaccine", "relation": "does_not_cause", "tail": "Cancer"}
+      ]
+    }
+  ]
+}
+
