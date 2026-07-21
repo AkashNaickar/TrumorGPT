@@ -8,7 +8,13 @@ import numpy as np
 from typing import List, Tuple
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
-from sentence_transformers import SentenceTransformer
+try:
+    from sentence_transformers import SentenceTransformer
+    HAS_SENTENCE_TRANSFORMERS = True
+except ImportError:
+    SentenceTransformer = None
+    HAS_SENTENCE_TRANSFORMERS = False
+
 import joblib
 import os
 
@@ -20,15 +26,17 @@ class TopicEnhancedSentenceCentrality:
         self.vectorizer = CountVectorizer(stop_words='english')
         self.lda_model = LatentDirichletAllocation(n_components=n_topics, random_state=42)
         self.is_trained = False
+        self.bert_model = None
 
-        try:
-            self.bert_model = SentenceTransformer(bert_model_name)
-        except Exception:
+        if HAS_SENTENCE_TRANSFORMERS and SentenceTransformer is not None:
             try:
-                self.bert_model = SentenceTransformer(bert_model_name, local_files_only=True)
-            except Exception:
-                os.environ["HF_HUB_OFFLINE"] = "1"
                 self.bert_model = SentenceTransformer(bert_model_name)
+            except Exception:
+                try:
+                    self.bert_model = SentenceTransformer(bert_model_name, local_files_only=True)
+                except Exception:
+                    self.bert_model = None
+
 
 
 
