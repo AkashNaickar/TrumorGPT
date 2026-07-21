@@ -59,8 +59,22 @@ class TopicEnhancedSentenceCentrality:
         if not sentences:
             return np.array([])
 
-        # 1. Compute BERT embeddings e_s
-        raw_bert_embeddings = self.bert_model.encode(sentences)
+        # 1. Compute sentence embeddings e_s (with fallback)
+        try:
+            if hasattr(self, 'bert_model') and self.bert_model is not None:
+                raw_bert_embeddings = self.bert_model.encode(sentences)
+            else:
+                raise ValueError("No BERT model available")
+        except Exception:
+            # Fallback TF-IDF vectorizer if SentenceTransformers/PyTorch unavailable
+            from sklearn.feature_extraction.text import TfidfVectorizer
+            tfidf = TfidfVectorizer().fit_transform(sentences)
+            raw_bert_embeddings = tfidf.toarray()
+            if raw_bert_embeddings.shape[1] < 10:
+                # Pad to 10 dims
+                pad_width = 10 - raw_bert_embeddings.shape[1]
+                raw_bert_embeddings = np.pad(raw_bert_embeddings, ((0,0), (0, pad_width)), 'constant')
+
         
         hybrid_embeddings = []
         for idx, sentence in enumerate(sentences):
