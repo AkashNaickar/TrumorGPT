@@ -211,27 +211,27 @@ class KnowledgeGraphBuilder:
     def build_knowledge_graph(self, query_text: str) -> Dict[str, Any]:
         """
         Executes knowledge graph construction pipeline.
-        Tries Gemini 1.5 Flash first -> Ollama (LLaMA 3.1 8B) -> OpenAI GPT-4 -> Rule-based Fallback.
+        Tries Ollama (LLaMA 3.1 8B) first -> Gemini 2.0 Flash -> OpenAI GPT-4 -> Rule-based Fallback.
         """
         triples = None
         source = None
 
-        # 1. Try Google Gemini first (if API key present)
-        triples = self.extract_triples_gemini(query_text)
+        # 1. Try local Ollama (LLaMA 3.1 8B) first
+        triples = self.extract_triples_ollama(query_text)
         if triples:
-            source = "Google Gemini 1.5 Flash"
+            source = "Ollama (LLaMA 3.1:8B)"
+            # Check if Ollama failed to extract a relation key (like missing "is_good_for")
+            if any(t.get("relation") in ["affects", "has_effect_on"] for t in triples):
+                fallback_triples = self.extract_triples_fallback(query_text)
+                if any(t.get("relation") == "is_good_for" for t in fallback_triples):
+                    triples = fallback_triples
+                    source = "Rule-based Health NLP Extractor (Enhanced)"
 
-        # 2. Fallback to Ollama (LLaMA 3.1 8B)
+        # 2. Fallback to Google Gemini
         if not triples:
-            triples = self.extract_triples_ollama(query_text)
+            triples = self.extract_triples_gemini(query_text)
             if triples:
-                source = "Ollama (LLaMA 3.1:8B)"
-                # Check if Ollama failed to extract a relation key (like missing "is_good_for")
-                if any(t.get("relation") in ["affects", "has_effect_on"] for t in triples):
-                    fallback_triples = self.extract_triples_fallback(query_text)
-                    if any(t.get("relation") == "is_good_for" for t in fallback_triples):
-                        triples = fallback_triples
-                        source = "Rule-based Health NLP Extractor (Enhanced)"
+                source = "Google Gemini 2.0 Flash"
 
         # 3. Fallback to OpenAI GPT-4
         if not triples:
