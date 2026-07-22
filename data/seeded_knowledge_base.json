@@ -77,6 +77,17 @@
         {"head": "SARS-CoV-2", "relation": "does_not_cause", "tail": "Cancer"},
         {"head": "mRNA Vaccine", "relation": "does_not_cause", "tail": "Cancer"}
       ]
+    },
+    {
+      "graph_id": "kg_transmission_08",
+      "source": "WHO / CDC Verified Transmission Guidelines",
+      "topic": "SARS-CoV-2 Transmission Dynamics",
+      "triples": [
+        {"head": "COVID-19", "relation": "is_spread_via", "tail": "Air"},
+        {"head": "SARS-CoV-2", "relation": "is_spread_via", "tail": "Airborne Respiratory Droplets"},
+        {"head": "COVID-19", "relation": "transmitted_by", "tail": "Airborne Aerosols"},
+        {"head": "N95 Masks", "relation": "reduces_transmission_of", "tail": "COVID-19"}
+      ]
     }
   ]
 }

@@ -47,7 +47,8 @@ class GraphRAGEngine:
             {"kids", "children", "pediatric_patients", "youth", "infants", "pediatric hospitalization"},
             {"covid", "covid-19", "sars-cov-2", "coronavirus", "covid infection"},
             {"good", "beneficial", "safe", "harmless", "has_effect good", "good_for"},
-            {"hospitalization", "severe_hospitalization", "pediatric hospitalization", "hospital admission"}
+            {"hospitalization", "severe_hospitalization", "pediatric hospitalization", "hospital admission"},
+            {"air", "airborne", "airborne_droplets", "respiratory_droplets", "airborne_aerosols", "via_air"}
         ]
         for cluster in synonym_clusters:
             if (e1_clean in cluster or any(c in e1_clean for c in cluster)) and \
@@ -67,11 +68,12 @@ class GraphRAGEngine:
         if self._entities_match(r1_c, r2_c):
             return True
         synonyms = [
-            {"reduces_risk_of", "prevents", "lowers_risk_of", "protects_against"},
+            {"reduces_risk_of", "prevents", "lowers_risk_of", "protects_against", "reduces_transmission_of"},
             {"causes", "leads_to", "results_in", "causes_respiratory_illness_in", "causes_hospitalization_risk_in", "is_harmful_disease_for"},
             {"manufactures", "manufactured_by", "developed_by", "makes"},
             {"approves", "authorized_by", "recommends", "recommends_vaccination_for"},
-            {"is_good_for", "is_beneficial_for", "is_safe_for", "good_for", "has_positive_effect"}
+            {"is_good_for", "is_beneficial_for", "is_safe_for", "good_for", "has_positive_effect"},
+            {"is_spread_via", "spreads_via", "spreads_through", "transmitted_by", "transmitted_via", "is_transmitted_by", "airborne_transmission_of"}
         ]
         for syn_set in synonyms:
             if r1_c in syn_set and r2_c in syn_set:
@@ -193,7 +195,7 @@ class GraphRAGEngine:
                     best_contradiction_found = False
                     best_contradiction_reason = ""
 
-        # Decision Logic (Section 3.5)
+        # Decision Logic (Section 3.5 - Open-World Verification)
         if best_match_score >= self.match_threshold and not best_contradiction_found:
             verdict = "True"
             reasoning = f"Query graph maps directly to verified Knowledge Graph '{best_matching_kg.get('topic') if best_matching_kg else 'Health Base'}' with similarity score {best_match_score:.2f}."
@@ -201,22 +203,8 @@ class GraphRAGEngine:
             verdict = "False"
             reasoning = f"Query contains verifiable inaccuracies. {best_contradiction_reason}."
         else:
-            has_matching_entity = False
-            for kg in self.knowledge_base:
-                ref_triples = self.extract_triple_set(kg)
-                for q_h, _, q_t in query_triples:
-                    for r_h, _, r_t in ref_triples:
-                        if self._entities_match(q_h, r_h) or self._entities_match(q_h, r_t):
-                            has_matching_entity = True
-                            best_matching_kg = kg
-                            break
-            
-            if has_matching_entity:
-                verdict = "False"
-                reasoning = f"Query references known entities but lacks direct factual path in knowledge base. Contradicts verified guidelines in '{best_matching_kg.get('topic') if best_matching_kg else 'Knowledge Base'}'."
-            else:
-                verdict = "Undetermined"
-                reasoning = "Insufficient factual graph overlap in knowledge base to make a definitive decision."
+            verdict = "Undetermined"
+            reasoning = "Insufficient factual graph overlap in current knowledge base to make a definitive decision. Claim is unverified."
 
         return {
             "verdict": verdict,
