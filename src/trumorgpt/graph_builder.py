@@ -74,7 +74,7 @@ class KnowledgeGraphBuilder:
             "options": {"temperature": 0.1}
         }
         try:
-            response = requests.post(f"{self.ollama_url}/api/generate", json=payload, timeout=12)
+            response = requests.post(f"{self.ollama_url}/api/generate", json=payload, timeout=30)
             if response.status_code == 200:
                 raw_text = response.json().get("response", "")
                 triples = self._parse_json_triples(raw_text)
@@ -220,12 +220,6 @@ class KnowledgeGraphBuilder:
         triples = self.extract_triples_ollama(query_text)
         if triples:
             source = "Ollama (LLaMA 3.1:8B)"
-            # Check if Ollama failed to extract a relation key (like missing "is_good_for")
-            if any(t.get("relation") in ["affects", "has_effect_on"] for t in triples):
-                fallback_triples = self.extract_triples_fallback(query_text)
-                if any(t.get("relation") == "is_good_for" for t in fallback_triples):
-                    triples = fallback_triples
-                    source = "Rule-based Health NLP Extractor (Enhanced)"
 
         # 2. Fallback to Google Gemini
         if not triples:
