@@ -1,0 +1,240 @@
+{
+  "e2e": {
+    "n": 600,
+    "strict": {
+      "accuracy": 0.0,
+      "accuracy_ci95": [
+        0.0,
+        0.0
+      ],
+      "confusion": {
+        "True->True": 0,
+        "True->False": 0,
+        "True->Undetermined": 300,
+        "False->True": 1,
+        "False->False": 0,
+        "False->Undetermined": 299
+      }
+    },
+    "coverage": 0.0017,
+    "undetermined_rate": 0.9983,
+    "determined": {
+      "n": 1,
+      "accuracy": 0.0,
+      "accuracy_ci95": [
+        0.0,
+        0.0
+      ],
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "set": "liar_health (Set A, external)",
+    "extractor": "Rule-based Health NLP Extractor (offline)",
+    "mean_latency_ms": 46.3
+  },
+  "kb_component": {
+    "n": 48,
+    "strict": {
+      "accuracy": 0.9167,
+      "accuracy_ci95": [
+        0.8333,
+        0.9792
+      ],
+      "confusion": {
+        "True->True": 33,
+        "True->False": 0,
+        "True->Undetermined": 0,
+        "False->True": 0,
+        "False->False": 11,
+        "False->Undetermined": 4
+      }
+    },
+    "coverage": 0.9167,
+    "undetermined_rate": 0.0833,
+    "determined": {
+      "n": 44,
+      "accuracy": 1.0,
+      "accuracy_ci95": [
+        1.0,
+        1.0
+      ],
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "set": "kb_graphs (Set C, component)",
+    "contradiction_recall": 0.7333
+  },
+  "baselines": {
+    "majority": {
+      "n": 600,
+      "strict": {
+        "accuracy": 0.5,
+        "accuracy_ci95": [
+          0.46,
+          0.54
+        ],
+        "confusion": {
+          "True->True": 0,
+          "True->False": 300,
+          "True->Undetermined": 0,
+          "False->True": 0,
+          "False->False": 300,
+          "False->Undetermined": 0
+        }
+      },
+      "coverage": 1.0,
+      "undetermined_rate": 0.0,
+      "determined": {
+        "n": 600,
+        "accuracy": 0.5,
+        "accuracy_ci95": [
+          0.46,
+          0.54
+        ],
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      }
+    },
+    "tfidf_lr": {
+      "n": 600,
+      "strict": {
+        "accuracy": 0.5883,
+        "accuracy_ci95": [
+          0.5483,
+          0.6283
+        ],
+        "confusion": {
+          "True->True": 100,
+          "True->False": 200,
+          "True->Undetermined": 0,
+          "False->True": 47,
+          "False->False": 253,
+          "False->Undetermined": 0
+        }
+      },
+      "coverage": 1.0,
+      "undetermined_rate": 0.0,
+      "determined": {
+        "n": 600,
+        "accuracy": 0.5883,
+        "accuracy_ci95": [
+          0.5483,
+          0.6283
+        ],
+        "precision": 0.6803,
+        "recall": 0.3333,
+        "f1": 0.4474
+      },
+      "set": "TF-IDF + LogisticRegression (trained on disjoint LIAR health pool)",
+      "train_n": 834
+    },
+    "gemini_zero_shot": {
+      "set": "Gemini (gemini-3.8-flash) zero-shot",
+      "available": false,
+      "error": "quota exhausted (HTTP 429)",
+      "note": "free-tier limit reached; baseline not run"
+    }
+  },
+  "ablations": {
+    "kb_threshold": {
+      "threshold=0.1": 0.9167,
+      "threshold=0.25": 0.9167,
+      "threshold=0.4": 0.9167,
+      "threshold=0.6": 0.9167
+    },
+    "kb_measure": {
+      "measure=max": 0.9167,
+      "measure=jaccard": 0.7708,
+      "measure=containment": 0.9167
+    },
+    "kb_contradiction": {
+      "contradiction_on": 0.9167,
+      "contradiction_off": 0.6875
+    },
+    "eta_alpha": {
+      "eta=0.5,alpha=1.0": {
+        "strict_accuracy": 0.0,
+        "coverage": 0.0
+      },
+      "eta=0.5,alpha=1.5": {
+        "strict_accuracy": 0.0,
+        "coverage": 0.0
+      },
+      "eta=0.5,alpha=2.0": {
+        "strict_accuracy": 0.0,
+        "coverage": 0.0
+      },
+      "eta=0.7,alpha=1.0": {
+        "strict_accuracy": 0.0,
+        "coverage": 0.0
+      },
+      "eta=0.7,alpha=1.5": {
+        "strict_accuracy": 0.0,
+        "coverage": 0.0
+      },
+      "eta=0.7,alpha=2.0": {
+        "strict_accuracy": 0.0,
+        "coverage": 0.0
+      },
+      "eta=0.9,alpha=1.0": {
+        "strict_accuracy": 0.0,
+        "coverage": 0.0
+      },
+      "eta=0.9,alpha=1.5": {
+        "strict_accuracy": 0.0,
+        "coverage": 0.0
+      },
+      "eta=0.9,alpha=2.0": {
+        "strict_accuracy": 0.0,
+        "coverage": 0.0
+      }
+    }
+  },
+  "paper_reported": {
+    "TrumorGPT": {
+      "accuracy": 88.5,
+      "precision": 91.4,
+      "recall": 85.0,
+      "f1": 88.1
+    },
+    "GPT-3.5": {
+      "accuracy": 72.7,
+      "precision": 75.8,
+      "recall": 66.7,
+      "f1": 70.9
+    },
+    "GPT-4": {
+      "accuracy": 83.3,
+      "precision": 85.7,
+      "recall": 80.0,
+      "f1": 82.8
+    },
+    "LLaMA 3.2": {
+      "accuracy": 81.8,
+      "precision": 83.0,
+      "recall": 80.0,
+      "f1": 81.5
+    },
+    "PaLM 2": {
+      "accuracy": 76.8,
+      "precision": 77.9,
+      "recall": 75.0,
+      "f1": 76.4
+    },
+    "Claude 3.5 Sonnet": {
+      "accuracy": 77.2,
+      "precision": 78.4,
+      "recall": 75.0,
+      "f1": 76.7
+    },
+    "Gemini 1.5": {
+      "accuracy": 81.7,
+      "precision": 83.9,
+      "recall": 78.3,
+      "f1": 81.0
+    }
+  }
+}

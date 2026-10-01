@@ -1,0 +1,48 @@
+{"id": "kb_pos_1", "triples": [{"head": "SARS-CoV-2", "relation": "causes", "tail": "COVID-19"}], "gold": "True", "kind": "positive", "topic": "mRNA Vaccine Efficacy"}
+{"id": "kb_neg_2", "triples": [{"head": "SARS-CoV-2", "relation": "does_not_cause", "tail": "COVID-19"}], "gold": "False", "kind": "contradiction", "topic": "mRNA Vaccine Efficacy"}
+{"id": "kb_pos_3", "triples": [{"head": "COVID-19", "relation": "causes", "tail": "Severe Hospitalization"}], "gold": "True", "kind": "positive", "topic": "mRNA Vaccine Efficacy"}
+{"id": "kb_neg_4", "triples": [{"head": "COVID-19", "relation": "does_not_cause", "tail": "Severe Hospitalization"}], "gold": "False", "kind": "contradiction", "topic": "mRNA Vaccine Efficacy"}
+{"id": "kb_pos_5", "triples": [{"head": "mRNA Vaccine", "relation": "reduces_risk_of", "tail": "Severe Hospitalization"}], "gold": "True", "kind": "positive", "topic": "mRNA Vaccine Efficacy"}
+{"id": "kb_neg_6", "triples": [{"head": "mRNA Vaccine", "relation": "increases_risk_of", "tail": "Severe Hospitalization"}], "gold": "False", "kind": "contradiction", "topic": "mRNA Vaccine Efficacy"}
+{"id": "kb_pos_7", "triples": [{"head": "CDC", "relation": "recommends", "tail": "mRNA Vaccine"}], "gold": "True", "kind": "positive", "topic": "mRNA Vaccine Efficacy"}
+{"id": "kb_pos_8", "triples": [{"head": "FDA", "relation": "approves", "tail": "mRNA Vaccine"}], "gold": "True", "kind": "positive", "topic": "mRNA Vaccine Efficacy"}
+{"id": "kb_pos_9", "triples": [{"head": "Pfizer-BioNTech", "relation": "manufactures", "tail": "mRNA Vaccine"}], "gold": "True", "kind": "positive", "topic": "mRNA Vaccine Efficacy"}
+{"id": "kb_pos_10", "triples": [{"head": "Moderna", "relation": "manufactures", "tail": "mRNA Vaccine"}], "gold": "True", "kind": "positive", "topic": "mRNA Vaccine Efficacy"}
+{"id": "kb_pos_11", "triples": [{"head": "Ivermectin", "relation": "is_approved_for", "tail": "Parasitic Infections"}], "gold": "True", "kind": "positive", "topic": "Ivermectin Inefficacy for COVID-19"}
+{"id": "kb_neg_12", "triples": [{"head": "Ivermectin", "relation": "failed_clinical_trials_for", "tail": "Parasitic Infections"}], "gold": "False", "kind": "contradiction", "topic": "Ivermectin Inefficacy for COVID-19"}
+{"id": "kb_pos_13", "triples": [{"head": "Ivermectin", "relation": "failed_clinical_trials_for", "tail": "COVID-19"}], "gold": "True", "kind": "positive", "topic": "Ivermectin Inefficacy for COVID-19"}
+{"id": "kb_neg_14", "triples": [{"head": "Ivermectin", "relation": "is_authorized_treatment_for", "tail": "COVID-19"}], "gold": "False", "kind": "contradiction", "topic": "Ivermectin Inefficacy for COVID-19"}
+{"id": "kb_pos_15", "triples": [{"head": "FDA", "relation": "does_not_approve", "tail": "Ivermectin for COVID-19"}], "gold": "True", "kind": "positive", "topic": "Ivermectin Inefficacy for COVID-19"}
+{"id": "kb_pos_16", "triples": [{"head": "Paxlovid", "relation": "is_authorized_treatment_for", "tail": "COVID-19"}], "gold": "True", "kind": "positive", "topic": "Ivermectin Inefficacy for COVID-19"}
+{"id": "kb_neg_17", "triples": [{"head": "Paxlovid", "relation": "failed_clinical_trials_for", "tail": "COVID-19"}], "gold": "False", "kind": "contradiction", "topic": "Ivermectin Inefficacy for COVID-19"}
+{"id": "kb_pos_18", "triples": [{"head": "mRNA Vaccine", "relation": "associated_with", "tail": "Myocarditis"}], "gold": "True", "kind": "positive", "topic": "Vaccine Side Effects vs Disease Risks"}
+{"id": "kb_pos_19", "triples": [{"head": "Myocarditis", "relation": "classified_as", "tail": "Rare Side Effect"}], "gold": "True", "kind": "positive", "topic": "Vaccine Side Effects vs Disease Risks"}
+{"id": "kb_pos_20", "triples": [{"head": "COVID-19 Infection", "relation": "causes_higher_rate_of", "tail": "Myocarditis"}], "gold": "True", "kind": "positive", "topic": "Vaccine Side Effects vs Disease Risks"}
+{"id": "kb_neg_21", "triples": [{"head": "COVID-19 Infection", "relation": "reduces_risk_of", "tail": "Myocarditis"}], "gold": "False", "kind": "contradiction", "topic": "Vaccine Side Effects vs Disease Risks"}
+{"id": "kb_pos_22", "triples": [{"head": "Balanced Diet", "relation": "helps_manage", "tail": "Type 2 Diabetes"}], "gold": "True", "kind": "positive", "topic": "Dietary Management of Diabetes"}
+{"id": "kb_pos_23", "triples": [{"head": "Balanced Diet", "relation": "regulates", "tail": "Blood Glucose Level"}], "gold": "True", "kind": "positive", "topic": "Dietary Management of Diabetes"}
+{"id": "kb_pos_24", "triples": [{"head": "Cardiovascular Exercise", "relation": "lowers_risk_of", "tail": "Coronary Heart Disease"}], "gold": "True", "kind": "positive", "topic": "Dietary Management of Diabetes"}
+{"id": "kb_pos_25", "triples": [{"head": "Metformin", "relation": "is_prescribed_treatment_for", "tail": "Type 2 Diabetes"}], "gold": "True", "kind": "positive", "topic": "Dietary Management of Diabetes"}
+{"id": "kb_pos_26", "triples": [{"head": "Florida Legislation", "relation": "blocked", "tail": "Vaccine Mandates"}], "gold": "True", "kind": "positive", "topic": "Public Health Mandates & Misinformation"}
+{"id": "kb_pos_27", "triples": [{"head": "Ron DeSantis", "relation": "signed", "tail": "Florida Legislation"}], "gold": "True", "kind": "positive", "topic": "Public Health Mandates & Misinformation"}
+{"id": "kb_pos_28", "triples": [{"head": "Vaccine Mandates", "relation": "remained", "tail": "Voluntary in Florida"}], "gold": "True", "kind": "positive", "topic": "Public Health Mandates & Misinformation"}
+{"id": "kb_pos_29", "triples": [{"head": "CDC Data 2021", "relation": "confirmed", "tail": "Higher COVID Deaths in 2021 than 2020"}], "gold": "True", "kind": "positive", "topic": "Public Health Mandates & Misinformation"}
+{"id": "kb_pos_30", "triples": [{"head": "COVID-19", "relation": "causes_respiratory_illness_in", "tail": "Children"}], "gold": "True", "kind": "positive", "topic": "Pediatric COVID-19 Health Risks"}
+{"id": "kb_neg_31", "triples": [{"head": "COVID-19", "relation": "does_not_cause", "tail": "Children"}], "gold": "False", "kind": "contradiction", "topic": "Pediatric COVID-19 Health Risks"}
+{"id": "kb_pos_32", "triples": [{"head": "COVID-19", "relation": "is_harmful_disease_for", "tail": "Children"}], "gold": "True", "kind": "positive", "topic": "Pediatric COVID-19 Health Risks"}
+{"id": "kb_neg_33", "triples": [{"head": "COVID-19", "relation": "is_safe_for", "tail": "Children"}], "gold": "False", "kind": "contradiction", "topic": "Pediatric COVID-19 Health Risks"}
+{"id": "kb_pos_34", "triples": [{"head": "COVID-19", "relation": "increases_risk_of", "tail": "Pediatric Hospitalization"}], "gold": "True", "kind": "positive", "topic": "Pediatric COVID-19 Health Risks"}
+{"id": "kb_neg_35", "triples": [{"head": "COVID-19", "relation": "reduces_risk_of", "tail": "Pediatric Hospitalization"}], "gold": "False", "kind": "contradiction", "topic": "Pediatric COVID-19 Health Risks"}
+{"id": "kb_pos_36", "triples": [{"head": "CDC", "relation": "recommends_vaccination_for", "tail": "Children"}], "gold": "True", "kind": "positive", "topic": "Pediatric COVID-19 Health Risks"}
+{"id": "kb_pos_37", "triples": [{"head": "COVID-19", "relation": "does_not_cause", "tail": "Cancer"}], "gold": "True", "kind": "positive", "topic": "COVID-19 & Cancer Etiology"}
+{"id": "kb_neg_38", "triples": [{"head": "COVID-19", "relation": "causes", "tail": "Cancer"}], "gold": "False", "kind": "contradiction", "topic": "COVID-19 & Cancer Etiology"}
+{"id": "kb_pos_39", "triples": [{"head": "SARS-CoV-2", "relation": "does_not_cause", "tail": "Cancer"}], "gold": "True", "kind": "positive", "topic": "COVID-19 & Cancer Etiology"}
+{"id": "kb_neg_40", "triples": [{"head": "SARS-CoV-2", "relation": "causes", "tail": "Cancer"}], "gold": "False", "kind": "contradiction", "topic": "COVID-19 & Cancer Etiology"}
+{"id": "kb_pos_41", "triples": [{"head": "mRNA Vaccine", "relation": "does_not_cause", "tail": "Cancer"}], "gold": "True", "kind": "positive", "topic": "COVID-19 & Cancer Etiology"}
+{"id": "kb_neg_42", "triples": [{"head": "mRNA Vaccine", "relation": "causes", "tail": "Cancer"}], "gold": "False", "kind": "contradiction", "topic": "COVID-19 & Cancer Etiology"}
+{"id": "kb_pos_43", "triples": [{"head": "COVID-19", "relation": "is_spread_via", "tail": "Air"}], "gold": "True", "kind": "positive", "topic": "SARS-CoV-2 Transmission Dynamics"}
+{"id": "kb_neg_44", "triples": [{"head": "COVID-19", "relation": "does_not_cause", "tail": "Air"}], "gold": "False", "kind": "contradiction", "topic": "SARS-CoV-2 Transmission Dynamics"}
+{"id": "kb_pos_45", "triples": [{"head": "SARS-CoV-2", "relation": "is_spread_via", "tail": "Airborne Respiratory Droplets"}], "gold": "True", "kind": "positive", "topic": "SARS-CoV-2 Transmission Dynamics"}
+{"id": "kb_neg_46", "triples": [{"head": "SARS-CoV-2", "relation": "does_not_cause", "tail": "Airborne Respiratory Droplets"}], "gold": "False", "kind": "contradiction", "topic": "SARS-CoV-2 Transmission Dynamics"}
+{"id": "kb_pos_47", "triples": [{"head": "COVID-19", "relation": "transmitted_by", "tail": "Airborne Aerosols"}], "gold": "True", "kind": "positive", "topic": "SARS-CoV-2 Transmission Dynamics"}
+{"id": "kb_pos_48", "triples": [{"head": "N95 Masks", "relation": "reduces_transmission_of", "tail": "COVID-19"}], "gold": "True", "kind": "positive", "topic": "SARS-CoV-2 Transmission Dynamics"}
