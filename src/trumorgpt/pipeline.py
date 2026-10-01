@@ -9,15 +9,16 @@ Integrates:
 
 import os
 import re
-from typing import List, Dict, Any
-from trumorgpt.lda_centrality import TopicEnhancedSentenceCentrality
-from trumorgpt.tst_ranker import TopicSpecificTextRank
+from typing import Any
+
 from trumorgpt.graph_builder import KnowledgeGraphBuilder
 from trumorgpt.graph_rag import GraphRAGEngine
+from trumorgpt.lda_centrality import TopicEnhancedSentenceCentrality
+from trumorgpt.tst_ranker import TopicSpecificTextRank
 
 
 class TrumorGPTPipeline:
-    def __init__(self, data_dir: str = None):
+    def __init__(self, data_dir: str | None = None):
         if data_dir is None:
             # Default data directory relative to project root
             base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -38,7 +39,7 @@ class TrumorGPTPipeline:
         # 1. Train LDA model on health corpus
         if os.path.exists(corpus_file):
             import json
-            with open(corpus_file, "r", encoding="utf-8") as f:
+            with open(corpus_file, encoding="utf-8") as f:
                 data = json.load(f)
                 docs = [item.get("text", "") for item in data.get("articles", [])]
                 if docs:
@@ -50,14 +51,14 @@ class TrumorGPTPipeline:
 
         self.is_initialized = True
 
-    def split_into_sentences(self, text: str) -> List[str]:
+    def split_into_sentences(self, text: str) -> list[str]:
         """Splits article or input text into clean sentences."""
         sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', text) if len(s.strip()) > 5]
         if not sentences and text.strip():
             sentences = [text.strip()]
         return sentences
 
-    def fact_check(self, query_text: str) -> Dict[str, Any]:
+    def fact_check(self, query_text: str) -> dict[str, Any]:
         """
         Executes end-to-end TrumorGPT Fact-Checking pipeline.
         Returns complete structured response matching paper format.
@@ -66,10 +67,10 @@ class TrumorGPTPipeline:
             self.initialize()
 
         sentences = self.split_into_sentences(query_text)
-        
+
         # Step 1: Compute Topic-Enhanced Sentence Centrality (LDA + BERT, eta=0.7)
-        W_s, v_embeddings = self.centrality_engine.compute_similarity_matrix(sentences)
-        
+        W_s, _v_embeddings = self.centrality_engine.compute_similarity_matrix(sentences)
+
         # Step 2: Compute Topic Relevance Vectors & Run TST (alpha=1.5)
         lda_topic_dists = [self.centrality_engine.get_topic_distribution(s) for s in sentences]
         u_vector = self.tst_engine.compute_topic_relevance_scores(sentences, lda_topic_dists)
@@ -103,8 +104,8 @@ class TrumorGPTPipeline:
             )
         else:
             explanation = (
-                f"The claim is undetermined. There is insufficient factual graph overlap in the current knowledge base "
-                f"to make a definitive decision. Relevant medical context has been provided."
+                "The claim is undetermined. There is insufficient factual graph overlap in the current knowledge base "
+                "to make a definitive decision. Relevant medical context has been provided."
             )
 
         return {
