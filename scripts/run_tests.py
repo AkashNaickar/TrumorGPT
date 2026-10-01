@@ -15,11 +15,11 @@ if base_dir not in sys.path:
     sys.path.insert(0, base_dir)
 
 from tests.test_trumorgpt import (
-    test_lda_sentence_centrality,
-    test_tst_ranker_convergence,
     test_graph_builder_triples,
     test_graph_rag_jaccard_similarity,
-    test_pipeline_end_to_end
+    test_lda_sentence_centrality,
+    test_pipeline_end_to_end,
+    test_tst_ranker_convergence,
 )
 
 

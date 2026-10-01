@@ -8,20 +8,20 @@ Exposes REST API endpoints:
 """
 
 import os
+
 from dotenv import load_dotenv
 
 # Load .env file (GEMINI_API_KEY, etc.) from project root
 _project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 load_dotenv(os.path.join(_project_root, ".env"))
 
+
 from fastapi import FastAPI, HTTPException
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
 
 from trumorgpt.pipeline import TrumorGPTPipeline
-
 
 app = FastAPI(
     title="TrumorGPT REST API & Web UI",
@@ -52,7 +52,7 @@ class SeedGraphRequest(BaseModel):
     graph_id: str
     source: str
     topic: str
-    triples: List[TripleItem]
+    triples: list[TripleItem]
 
 
 @app.on_event("startup")
@@ -95,7 +95,7 @@ def fact_check_endpoint(request: FactCheckRequest):
     """Executes full 5-component paper pipeline on a health query."""
     if not request.query or len(request.query.strip()) == 0:
         raise HTTPException(status_code=400, detail="Query string cannot be empty.")
-    
+
     result = pipeline.fact_check(request.query.strip())
     return result
 
@@ -107,7 +107,7 @@ def seed_graph_endpoint(request: SeedGraphRequest):
         "graph_id": request.graph_id,
         "source": request.source,
         "topic": request.topic,
-        "triples": [t.dict() for t in request.triples]
+        "triples": [t.model_dump() for t in request.triples]
     }
     pipeline.graph_rag_engine.add_knowledge_graph(graph_dict)
     return {

@@ -7,8 +7,9 @@ Key Parameters:
 - tolerance = 1e-6 in L1 norm
 """
 
+from typing import Any
+
 import numpy as np
-from typing import List, Dict, Any, Tuple
 
 
 class TopicSpecificTextRank:
@@ -19,10 +20,10 @@ class TopicSpecificTextRank:
         self.max_iter = max_iter
 
     def compute_topic_relevance_scores(
-        self, 
-        sentences: List[str], 
-        lda_topic_distributions: List[np.ndarray], 
-        health_topic_indices: List[int] = None
+        self,
+        sentences: list[str],
+        lda_topic_distributions: list[np.ndarray],
+        health_topic_indices: list[int] | None = None
     ) -> np.ndarray:
         """
         Computes topic relevance vector u = [R(v_1), R(v_2), ..., R(v_n)]
@@ -55,11 +56,11 @@ class TopicSpecificTextRank:
         return u
 
     def rank_sentences(
-        self, 
-        sentences: List[str], 
-        similarity_matrix: np.ndarray, 
+        self,
+        sentences: list[str],
+        similarity_matrix: np.ndarray,
         topic_relevance_vector: np.ndarray
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Runs Topic-Specific TextRank (TST) power iteration algorithm.
         Returns dictionary containing TST scores, ranked indices, iterations, and convergence log.
@@ -112,7 +113,7 @@ class TopicSpecificTextRank:
         for it in range(1, self.max_iter + 1):
             prev_tst = tst_vec.copy()
             tst_vec = P_prime @ tst_vec  # Power step: TST^(t+1) = P' * TST^(t)
-            
+
             diff = np.sum(np.abs(tst_vec - prev_tst))  # L1 norm difference
             iterations = it
 

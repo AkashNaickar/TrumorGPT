@@ -56,11 +56,11 @@ def main():
             print(f" VERDICT: {badge}")
             print("=" * 70)
             print(f"Explanation:\n{result['explanation']}\n")
-            
+
             print(f"Graph Similarity Score : {result['metrics']['accuracy_score']:.4f}")
             print(f"Extracted Graph Source : {result['query_knowledge_graph']['source']}")
             print(f"TST Power Iterations   : {result['metrics']['tst_iterations']} (Converged: {result['metrics']['tst_converged']})")
-            
+
             print("\nExtracted Query Triples (G_x):")
             for t in result['query_knowledge_graph']['triples']:
                 print(f"  - ({t['head']}) --[{t['relation']}]--> ({t['tail']})")

@@ -3,7 +3,6 @@ Script to inspect and seed the GraphRAG Knowledge Base.
 """
 
 import os
-import json
 import sys
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

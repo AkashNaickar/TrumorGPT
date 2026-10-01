@@ -1,0 +1,24 @@
+# Ruff configuration for TrumorGPT.
+# Blind exception handlers are intentional: the pipeline degrades gracefully
+# from Ollama -> Gemini -> OpenAI -> rule-based extraction, so broad
+# `except Exception` fallbacks are by design.
+line-length = 100
+target-version = "py312"
+
+[lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "RUF"]
+ignore = [
+    "BLE001", # broad excepts are intentional fallbacks
+    "S110",   # try-except-pass in optional external service calls
+    "SIM102", # nested ifs read clearer in rule-based extractors
+    "E501",   # long synonym-set / data lines left as-is
+]
+
+[lint.pydocstyle]
+convention = "google"
+
+[lint.per-file-ignores]
+# app.py loads .env before importing FastAPI; tests set sys.path first.
+"src/trumorgpt/app.py" = ["E402"]
+"tests/*" = ["E402"]
+"scripts/*" = ["E402"]
