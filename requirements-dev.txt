@@ -1,0 +1,7 @@
+# Extra dependencies for the evaluation harness, figures, and deck generation.
+# Not required to run the API.
+sentence-transformers==6.1.0
+torch==2.14.1
+transformers==5.18.0
+matplotlib==3.11.2
+python-pptx==1.0.2
