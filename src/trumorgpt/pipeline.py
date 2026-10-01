@@ -91,7 +91,28 @@ class TrumorGPTPipeline:
         reasoning = rag_results["semantic_reasoning"]
         best_kg_topic = rag_results["best_matching_kg"].get("topic") if rag_results["best_matching_kg"] else "Public Health Database"
 
-        if verdict == "True":
+        # Step 5b: LLM judge fallback for claims outside the knowledge base.
+        # Opt-in: skipped in offline mode. Only raises confidence via a reachable LLM backend;
+        # if no backend answers, the safe "Undetermined" verdict is kept.
+        verdict_source = "GraphRAG knowledge base"
+        if verdict == "Undetermined" and os.getenv("TRUMORGPT_OFFLINE") != "1":
+            try:
+                from trumorgpt.llm_judge import LLMJudge
+                judged = LLMJudge().judge(query_text)
+            except Exception:
+                judged = None
+            if judged and judged.get("verdict") in ("True", "False"):
+                verdict = judged["verdict"]
+                reasoning = judged.get("reason", "")
+                best_kg_topic = judged.get("source", "LLM judge")
+                verdict_source = judged.get("source", "LLM judge")
+
+        if verdict_source.startswith("LLM judge"):
+            explanation = (
+                f"The claim did not match the current health knowledge base, so it was judged by an "
+                f"LLM fallback: the statement is {verdict.lower()}. {reasoning}"
+            )
+        elif verdict == "True":
             explanation = (
                 f"The statement is true. Semantic health knowledge graph analysis confirms that the claim "
                 f"aligns with verified guidelines in '{best_kg_topic}'. {reasoning}"
@@ -116,7 +137,8 @@ class TrumorGPTPipeline:
                 "tst_iterations": tst_results.get("iterations", 0),
                 "tst_converged": tst_results.get("converged", True),
                 "total_sentences": len(sentences),
-                "key_sentences_extracted": key_sentences
+                "key_sentences_extracted": key_sentences,
+                "verdict_source": verdict_source
             },
             "query_knowledge_graph": query_kg,
             "evidence_knowledge_graph": rag_results["best_matching_kg"]

@@ -7,6 +7,8 @@ import os
 import sys
 import traceback
 
+os.environ.setdefault("TRUMORGPT_OFFLINE", "1")
+
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 src_dir = os.path.join(base_dir, "src")
 if src_dir not in sys.path:
@@ -21,6 +23,12 @@ from tests.test_trumorgpt import (
     test_graph_rag_jaccard_similarity,
     test_pipeline_end_to_end
 )
+from tests.test_eval import (
+    test_embedding_dim_stable,
+    test_metrics_fixture,
+    test_pipeline_edge_cases,
+    test_llm_judge_parse,
+)
 
 
 def run_all_tests():
@@ -33,7 +41,11 @@ def run_all_tests():
         ("Topic-Specific TextRank Convergence (alpha=1.5)", test_tst_ranker_convergence),
         ("Knowledge Graph Extraction (Triples)", test_graph_builder_triples),
         ("GraphRAG Jaccard Similarity Engine", test_graph_rag_jaccard_similarity),
-        ("End-to-End TrumorGPT Fact-Checking Pipeline", test_pipeline_end_to_end)
+        ("End-to-End TrumorGPT Fact-Checking Pipeline", test_pipeline_end_to_end),
+        ("Embedding dimension stability (BERT + LDA fusion)", test_embedding_dim_stable),
+        ("Evaluation metric computation (fixture)", test_metrics_fixture),
+        ("Pipeline robustness and abstention edge cases", test_pipeline_edge_cases),
+        ("LLM judge response parsing", test_llm_judge_parse),
     ]
 
     passed = 0

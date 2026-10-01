@@ -23,6 +23,10 @@ class TopicEnhancedSentenceCentrality:
     def __init__(self, eta: float = 0.7, n_topics: int = 5, bert_model_name: str = 'all-MiniLM-L6-v2'):
         self.eta = eta
         self.n_topics = n_topics
+        # Sentence embedding dimension (all-MiniLM-L6-v2 produces 384-dim vectors).
+        # The TF-IDF fallback is resized to this dimension so the fused vector
+        # v_s = [ eta * e_hat_s ; (1 - eta) * t_hat_s ] has a stable shape.
+        self.embedding_dim = 384
         self.vectorizer = CountVectorizer(stop_words='english')
         self.lda_model = LatentDirichletAllocation(n_components=n_topics, random_state=42)
         self.is_trained = False
@@ -36,6 +40,27 @@ class TopicEnhancedSentenceCentrality:
                     self.bert_model = SentenceTransformer(bert_model_name, local_files_only=True)
                 except Exception:
                     self.bert_model = None
+            if self.bert_model is not None:
+                try:
+                    self.embedding_dim = self.bert_model.get_embedding_dimension()
+                except AttributeError:
+                    try:
+                        self.embedding_dim = self.bert_model.get_sentence_embedding_dimension()
+                    except Exception:
+                        pass
+                except Exception:
+                    pass
+
+    def _resize_embeddings(self, matrix: np.ndarray, dim: int) -> np.ndarray:
+        """Pads or truncates an embedding matrix to a fixed dimension."""
+        if matrix.size == 0:
+            return np.zeros((matrix.shape[0], dim))
+        current = matrix.shape[1]
+        if current == dim:
+            return matrix
+        if current > dim:
+            return matrix[:, :dim]
+        return np.pad(matrix, ((0, 0), (0, dim - current)), 'constant')
 
 
 
@@ -78,10 +103,7 @@ class TopicEnhancedSentenceCentrality:
             from sklearn.feature_extraction.text import TfidfVectorizer
             tfidf = TfidfVectorizer().fit_transform(sentences)
             raw_bert_embeddings = tfidf.toarray()
-            if raw_bert_embeddings.shape[1] < 10:
-                # Pad to 10 dims
-                pad_width = 10 - raw_bert_embeddings.shape[1]
-                raw_bert_embeddings = np.pad(raw_bert_embeddings, ((0,0), (0, pad_width)), 'constant')
+            raw_bert_embeddings = self._resize_embeddings(raw_bert_embeddings, self.embedding_dim)
 
         
         hybrid_embeddings = []

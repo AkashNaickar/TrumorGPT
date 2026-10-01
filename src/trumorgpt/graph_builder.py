@@ -224,23 +224,28 @@ class KnowledgeGraphBuilder:
         """
         Executes knowledge graph construction pipeline.
         Tries Ollama (LLaMA 3.1 8B) first -> Gemini 2.0 Flash -> OpenAI GPT-4 -> Rule-based Fallback.
+        Set TRUMORGPT_OFFLINE=1 to force the deterministic rule-based extractor (used by the
+        evaluation harness so large batches do not depend on network/LLM availability).
         """
         triples = None
         source = None
 
+        offline = os.getenv("TRUMORGPT_OFFLINE") == "1"
+
         # 1. Try local Ollama (LLaMA 3.1 8B) first
-        triples = self.extract_triples_ollama(query_text)
-        if triples:
-            source = "Ollama (LLaMA 3.1:8B)"
+        if not offline:
+            triples = self.extract_triples_ollama(query_text)
+            if triples:
+                source = "Ollama (LLaMA 3.1:8B)"
 
         # 2. Fallback to Google Gemini
-        if not triples:
+        if not triples and not offline:
             triples = self.extract_triples_gemini(query_text)
             if triples:
-                source = "Google Gemini 2.0 Flash"
+                source = "Google Gemini"
 
         # 3. Fallback to OpenAI GPT-4
-        if not triples:
+        if not triples and not offline:
             triples = self.extract_triples_openai(query_text)
             if triples:
                 source = "OpenAI GPT-4"
@@ -248,7 +253,7 @@ class KnowledgeGraphBuilder:
         # 4. Final fallback to rule-based extractor
         if not triples:
             triples = self.extract_triples_fallback(query_text)
-            source = "Rule-based Health NLP Extractor"
+            source = "Rule-based Health NLP Extractor" + (" (offline)" if offline else "")
 
         entities = set()
         relations = set()
