@@ -16,18 +16,18 @@ if src_dir not in sys.path:
 if base_dir not in sys.path:
     sys.path.insert(0, base_dir)
 
-from tests.test_trumorgpt import (
-    test_lda_sentence_centrality,
-    test_tst_ranker_convergence,
-    test_graph_builder_triples,
-    test_graph_rag_jaccard_similarity,
-    test_pipeline_end_to_end
-)
 from tests.test_eval import (
     test_embedding_dim_stable,
+    test_llm_judge_parse,
     test_metrics_fixture,
     test_pipeline_edge_cases,
-    test_llm_judge_parse,
+)
+from tests.test_trumorgpt import (
+    test_graph_builder_triples,
+    test_graph_rag_jaccard_similarity,
+    test_lda_sentence_centrality,
+    test_pipeline_end_to_end,
+    test_tst_ranker_convergence,
 )
 
 

@@ -5,26 +5,26 @@ Output Verdict: y in {True, False, Undetermined}
 """
 
 import json
-from typing import List, Dict, Any, Tuple, Set
+from typing import Any
 
 
 class GraphRAGEngine:
     def __init__(self, match_threshold: float = 0.25):
         self.match_threshold = match_threshold
-        self.knowledge_base: List[Dict[str, Any]] = []
+        self.knowledge_base: list[dict[str, Any]] = []
 
     def load_knowledge_base(self, filepath: str) -> int:
         """Loads reference knowledge base from JSON file."""
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             data = json.load(f)
             self.knowledge_base = data.get("knowledge_graphs", [])
         return len(self.knowledge_base)
 
-    def add_knowledge_graph(self, graph: Dict[str, Any]) -> None:
+    def add_knowledge_graph(self, graph: dict[str, Any]) -> None:
         """Dynamically appends a new verified Knowledge Graph to the index."""
         self.knowledge_base.append(graph)
 
-    def extract_triple_set(self, graph_dict: Dict[str, Any]) -> Set[Tuple[str, str, str]]:
+    def extract_triple_set(self, graph_dict: dict[str, Any]) -> set[tuple[str, str, str]]:
         """Converts graph dictionary into a normalized set of triple tuples (h, r, t)."""
         triples = set()
         for t in graph_dict.get("triples", []):
@@ -41,7 +41,7 @@ class GraphRAGEngine:
         e2_clean = e2.strip().lower()
         if e1_clean == e2_clean:
             return True
-        
+
         # Medical Entity Synonym Clusters
         synonym_clusters = [
             {"kids", "children", "pediatric_patients", "youth", "infants", "pediatric hospitalization"},
@@ -80,32 +80,32 @@ class GraphRAGEngine:
                 return True
         return False
 
-    def _triples_match(self, q_triple: Tuple[str, str, str], r_triple: Tuple[str, str, str]) -> bool:
+    def _triples_match(self, q_triple: tuple[str, str, str], r_triple: tuple[str, str, str]) -> bool:
         """Checks if a query triple matches a reference triple semantically."""
         q_h, q_r, q_t = q_triple
         r_h, r_r, r_t = r_triple
-        
+
         # Direct match
         direct_match = (
-            self._entities_match(q_h, r_h) and 
-            self._relations_match(q_r, r_r) and 
+            self._entities_match(q_h, r_h) and
+            self._relations_match(q_r, r_r) and
             self._entities_match(q_t, r_t)
         )
         if direct_match:
             return True
-            
+
         # Inverse match: (mRNA Vaccine, manufactured_by, Pfizer) vs (Pfizer, manufactures, mRNA Vaccine)
         inverse_match = (
-            self._entities_match(q_h, r_t) and 
-            self._relations_match(q_r, r_r) and 
+            self._entities_match(q_h, r_t) and
+            self._relations_match(q_r, r_r) and
             self._entities_match(q_t, r_h)
         )
         return inverse_match
 
     def compute_similarity(
-        self, 
-        query_triples: Set[Tuple[str, str, str]], 
-        reference_triples: Set[Tuple[str, str, str]]
+        self,
+        query_triples: set[tuple[str, str, str]],
+        reference_triples: set[tuple[str, str, str]]
     ) -> float:
         """
         Computes Graph Similarity S(G_x, G_i) combining Jaccard Similarity
@@ -129,10 +129,10 @@ class GraphRAGEngine:
         return max(jaccard, containment)
 
     def detect_contradiction(
-        self, 
-        query_triples: Set[Tuple[str, str, str]], 
-        reference_triples: Set[Tuple[str, str, str]]
-    ) -> Tuple[bool, str]:
+        self,
+        query_triples: set[tuple[str, str, str]],
+        reference_triples: set[tuple[str, str, str]]
+    ) -> tuple[bool, str]:
         """
         Detects relational contradictions between query graph and reference graphs.
         Contradiction requires BOTH head and tail entities to match (same subject and object),
@@ -140,14 +140,14 @@ class GraphRAGEngine:
         """
         contradiction_pairs = [
             # Risk/Harm vs Benefit/Safety/Non-causation
-            ({"causes", "increases_risk_of", "causes_respiratory_illness_in", "is_harmful_disease_for", "causes_hospitalization_risk_in"}, 
+            ({"causes", "increases_risk_of", "causes_respiratory_illness_in", "is_harmful_disease_for", "causes_hospitalization_risk_in"},
              {"reduces_risk_of", "prevents", "treats", "cures", "is_good_for", "is_beneficial_for", "is_safe_for", "harmless_to", "safe_for", "good_for", "does_not_cause", "unrelated_to"}),
 
-            
+
             # Approved / Effective vs Failed / Unproven / Dangerous
-            ({"cures", "approved_for", "is_authorized_treatment_for", "claimed_treatment_for"}, 
+            ({"cures", "approved_for", "is_authorized_treatment_for", "claimed_treatment_for"},
              {"failed_clinical_trials_for", "does_not_approve", "unproven_for", "dangerous_for"}),
-            
+
             # Mandated vs Prohibited
             ({"blocked", "prohibited"}, {"mandated", "enforced"})
         ]
@@ -165,13 +165,13 @@ class GraphRAGEngine:
 
         return False, ""
 
-    def verify_query_graph(self, query_graph: Dict[str, Any]) -> Dict[str, Any]:
+    def verify_query_graph(self, query_graph: dict[str, Any]) -> dict[str, Any]:
         """
         Verifies query graph G_x against Knowledge Base graphs {G_i}.
         Returns verdict in {True, False, Undetermined}, similarity scores, and matched evidence.
         """
         query_triples = self.extract_triple_set(query_graph)
-        
+
         best_match_score = 0.0
         best_matching_kg = None
         best_contradiction_found = False

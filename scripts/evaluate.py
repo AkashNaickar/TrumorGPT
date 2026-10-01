@@ -36,9 +36,9 @@ if SRC not in sys.path:
 
 os.environ.setdefault("TRUMORGPT_OFFLINE", "1")
 
-from trumorgpt.pipeline import TrumorGPTPipeline  # noqa: E402
-from trumorgpt.graph_rag import GraphRAGEngine  # noqa: E402
-from trumorgpt.tst_ranker import TopicSpecificTextRank  # noqa: E402
+from trumorgpt.graph_rag import GraphRAGEngine
+from trumorgpt.pipeline import TrumorGPTPipeline
+from trumorgpt.tst_ranker import TopicSpecificTextRank
 
 EVAL_DIR = os.path.join(BASE, "data", "eval")
 RESULTS_DIR = os.path.join(BASE, "results")
@@ -74,10 +74,10 @@ def bootstrap_ci(correct, n_boot=2000, seed=SEED):
 
 def compute_metrics(golds, preds):
     n = len(golds)
-    strict_correct = [1 if p == g else 0 for g, p in zip(golds, preds)]
+    strict_correct = [1 if p == g else 0 for g, p in zip(golds, preds, strict=True)]
     strict_acc = sum(strict_correct) / n if n else 0.0
 
-    determined = [(g, p) for g, p in zip(golds, preds) if p in ("True", "False")]
+    determined = [(g, p) for g, p in zip(golds, preds, strict=True) if p in ("True", "False")]
     det_correct = [1 if p == g else 0 for g, p in determined]
     det_acc = sum(det_correct) / len(determined) if determined else 0.0
 
@@ -88,7 +88,7 @@ def compute_metrics(golds, preds):
     recall = tp / (tp + fn) if (tp + fn) else 0.0
     f1 = 2 * precision * recall / (precision + recall) if (precision + recall) else 0.0
 
-    conf = Counter(zip(golds, preds))
+    conf = Counter(zip(golds, preds, strict=True))
     return {
         "n": n,
         "strict": {
@@ -169,7 +169,6 @@ def eval_kb_component(contradiction=True, measure="max", threshold=0.25):
     if not contradiction:
         engine.detect_contradiction = lambda *a, **k: (False, "")
     if measure != "max":
-        orig = engine.compute_similarity
         if measure == "jaccard":
             def compute_similarity(q, r, engine=engine):
                 if not q or not r:
@@ -239,7 +238,7 @@ def baseline_gemini(limit=40):
     model = "gemini-3.8-flash"
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
     golds, preds, rows = [], [], []
-    for k, i in enumerate(idx):
+    for i in idx:
         claim = test[i]["claim"]
         prompt = ("You are a strict fact-checker. Decide if the claim is True or False. "
                   "Reply with exactly one word, True or False.\nClaim: " + claim)
@@ -327,35 +326,48 @@ def make_figures(e2e_metrics, baselines, ablations):
     labels = ["True", "False", "Undetermined"]
     mat = np.array([[conf[f"{g}->{p}"] for p in labels] for g in ("True", "False")])
     fig, ax = plt.subplots(figsize=(5, 3.5))
-    im = ax.imshow(mat, cmap="Blues")
-    ax.set_xticks(range(3)); ax.set_xticklabels(labels)
-    ax.set_yticks(range(2)); ax.set_yticklabels(["True", "False"])
-    ax.set_xlabel("Predicted"); ax.set_ylabel("Gold"); ax.set_title("Set A confusion (strict)")
+    ax.imshow(mat, cmap="Blues")
+    ax.set_xticks(range(3))
+    ax.set_xticklabels(labels)
+    ax.set_yticks(range(2))
+    ax.set_yticklabels(["True", "False"])
+    ax.set_xlabel("Predicted")
+    ax.set_ylabel("Gold")
+    ax.set_title("Set A confusion (strict)")
     for i in range(2):
         for j in range(3):
             ax.text(j, i, mat[i, j], ha="center", va="center", color="black")
-    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "confusion_setA.png"), dpi=150); plt.close(fig)
+    fig.tight_layout()
+    fig.savefig(os.path.join(FIG_DIR, "confusion_setA.png"), dpi=150)
+    plt.close(fig)
 
     # baselines bar
     names, accs = [], []
     for k, v in baselines.items():
         if isinstance(v, dict) and "strict" in v:
-            names.append(v.get("set", k)); accs.append(v["strict"]["accuracy"])
+            names.append(v.get("set", k))
+            accs.append(v["strict"]["accuracy"])
     fig, ax = plt.subplots(figsize=(6, 3.5))
     ax.bar(names, [a * 100 for a in accs], color="#4c72b0")
-    ax.set_ylabel("Strict accuracy (%)"); ax.set_ylim(0, 100)
+    ax.set_ylabel("Strict accuracy (%)")
+    ax.set_ylim(0, 100)
     ax.set_title("Set A: baselines")
     plt.xticks(rotation=15, ha="right")
-    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "baselines_setA.png"), dpi=150); plt.close(fig)
+    fig.tight_layout()
+    fig.savefig(os.path.join(FIG_DIR, "baselines_setA.png"), dpi=150)
+    plt.close(fig)
 
     # ablation bars
     fig, ax = plt.subplots(figsize=(6, 3.5))
     keys = list(ablations["kb_measure"].keys())
     vals = [v * 100 for v in ablations["kb_measure"].values()]
     ax.bar(keys, vals, color="#55a868")
-    ax.set_ylabel("Component strict accuracy (%)"); ax.set_ylim(0, 105)
+    ax.set_ylabel("Component strict accuracy (%)")
+    ax.set_ylim(0, 105)
     ax.set_title("GraphRAG similarity measure")
-    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "ablation_measure.png"), dpi=150); plt.close(fig)
+    fig.tight_layout()
+    fig.savefig(os.path.join(FIG_DIR, "ablation_measure.png"), dpi=150)
+    plt.close(fig)
 
 
 def main():

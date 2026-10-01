@@ -2,8 +2,8 @@
 Script to train and save the LDA Topic Model for Topic-Enhanced Sentence Centrality.
 """
 
-import os
 import json
+import os
 import sys
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,7 +19,7 @@ def main():
     model_prefix = os.path.join(base_dir, "data", "lda_model")
 
     print(f"Loading corpus from: {data_file}")
-    with open(data_file, "r", encoding="utf-8") as f:
+    with open(data_file, encoding="utf-8") as f:
         data = json.load(f)
 
     articles = [a["text"] for a in data.get("articles", [])]
@@ -28,7 +28,7 @@ def main():
     engine = TopicEnhancedSentenceCentrality(eta=0.7, n_topics=5)
     print("Training LDA model (K=5 topics)...")
     engine.train_lda(articles)
-    
+
     print(f"Saving LDA models to: {model_prefix}_*.pkl")
     engine.save(model_prefix)
     print("[SUCCESS] LDA Topic Training Complete!")

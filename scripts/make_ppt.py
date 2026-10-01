@@ -1,14 +1,15 @@
 """Generate a plain, text-only capstone presentation for TrumorGPT."""
 
+import json
 import os
 import re
-import json
 import zipfile
 from datetime import datetime
+
 from pptx import Presentation
-from pptx.util import Inches, Pt, Emu
 from pptx.dml.color import RGBColor
-from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
+from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
+from pptx.util import Inches, Pt
 
 BLACK = RGBColor(0x00, 0x00, 0x00)
 DARK = RGBColor(0x1F, 0x1F, 0x1F)

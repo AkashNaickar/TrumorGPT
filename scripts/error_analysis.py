@@ -9,7 +9,6 @@ or produced a wrong committed verdict.
 """
 
 import csv
-import json
 import os
 import sys
 
@@ -19,7 +18,7 @@ if SRC not in sys.path:
     sys.path.insert(0, SRC)
 os.environ.setdefault("TRUMORGPT_OFFLINE", "1")
 
-from trumorgpt.pipeline import TrumorGPTPipeline  # noqa: E402
+from trumorgpt.pipeline import TrumorGPTPipeline
 
 RESULTS = os.path.join(BASE, "results")
 PRED = os.path.join(RESULTS, "liar_health_predictions.csv")

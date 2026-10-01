@@ -19,9 +19,9 @@ for p in (SRC, BASE):
 
 os.environ.setdefault("TRUMORGPT_OFFLINE", "1")
 
-from trumorgpt.lda_centrality import TopicEnhancedSentenceCentrality  # noqa: E402
-from trumorgpt.pipeline import TrumorGPTPipeline  # noqa: E402
-from scripts.evaluate import compute_metrics  # noqa: E402
+from scripts.evaluate import compute_metrics
+from trumorgpt.lda_centrality import TopicEnhancedSentenceCentrality
+from trumorgpt.pipeline import TrumorGPTPipeline
 
 
 def test_embedding_dim_stable():

@@ -7,11 +7,11 @@ Extracts structured entity-relation triples (h, r, t) from text using:
 """
 
 import json
-import re
 import os
-import requests
-from typing import List, Dict, Any, Tuple
+import re
+from typing import Any
 
+import requests
 
 FEW_SHOT_PROMPT_TEMPLATE = """You are an expert medical AI constructing a Semantic Health Knowledge Graph.
 Extract key medical entities and their relational facts from the given query as structured triples (head, relation, tail).
@@ -53,18 +53,18 @@ Triples (respond ONLY with a JSON array of triple objects):
 
 class KnowledgeGraphBuilder:
     def __init__(
-        self, 
-        ollama_url: str = "http://localhost:11434", 
+        self,
+        ollama_url: str = "http://localhost:11434",
         ollama_model: str = "llama3.1:8b",
-        openai_api_key: str = None,
-        gemini_api_key: str = None
+        openai_api_key: str | None = None,
+        gemini_api_key: str | None = None
     ):
         self.ollama_url = ollama_url
         self.ollama_model = ollama_model
         self.openai_api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
         self.gemini_api_key = gemini_api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
-    def extract_triples_ollama(self, query_text: str) -> List[Dict[str, str]]:
+    def extract_triples_ollama(self, query_text: str) -> list[dict[str, str]]:
         """Extracts triples using local Ollama (llama3.1:8b)."""
         prompt = FEW_SHOT_PROMPT_TEMPLATE.format(query_text=query_text)
         payload = {
@@ -86,7 +86,7 @@ class KnowledgeGraphBuilder:
                         v = t.get("tail") or t.get("object") or ""
                         if h and r and v:
                             normalized.append({"head": str(h), "relation": str(r), "tail": str(v)})
-                
+
                 # If LLM didn't return strict JSON, extract word-based fallback under Ollama engine
                 if not normalized:
                     words = [w for w in re.findall(r'\b\w+\b', query_text) if len(w) > 3]
@@ -94,17 +94,17 @@ class KnowledgeGraphBuilder:
                         normalized.append({"head": words[0].capitalize(), "relation": "associated_with", "tail": words[1].capitalize()})
                     else:
                         normalized.append({"head": "Health Claim", "relation": "relates_to", "tail": "Public Health"})
-                
+
                 return normalized
         except Exception:
             pass
         return None
 
-    def extract_triples_gemini(self, query_text: str) -> List[Dict[str, str]]:
+    def extract_triples_gemini(self, query_text: str) -> list[dict[str, str]]:
         """Extracts triples using Google Gemini 2.0 Flash API."""
         if not self.gemini_api_key:
             return None
-        
+
         try:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={self.gemini_api_key}"
             prompt = FEW_SHOT_PROMPT_TEMPLATE.format(query_text=query_text)
@@ -131,11 +131,11 @@ class KnowledgeGraphBuilder:
             print(f"[Gemini API] Error: {e}")
         return None
 
-    def extract_triples_openai(self, query_text: str) -> List[Dict[str, str]]:
+    def extract_triples_openai(self, query_text: str) -> list[dict[str, str]]:
         """Extracts triples using OpenAI GPT-4 API."""
         if not self.openai_api_key:
             return None
-        
+
         try:
             headers = {
                 "Authorization": f"Bearer {self.openai_api_key}",
@@ -155,7 +155,7 @@ class KnowledgeGraphBuilder:
             pass
         return None
 
-    def extract_triples_fallback(self, query_text: str) -> List[Dict[str, str]]:
+    def extract_triples_fallback(self, query_text: str) -> list[dict[str, str]]:
         """
         Rule-based zero-dependency NLP triple extractor fallback.
         Uses key verb phrase heuristic matching for claims.
@@ -220,7 +220,7 @@ class KnowledgeGraphBuilder:
 
         return triples
 
-    def build_knowledge_graph(self, query_text: str) -> Dict[str, Any]:
+    def build_knowledge_graph(self, query_text: str) -> dict[str, Any]:
         """
         Executes knowledge graph construction pipeline.
         Tries Ollama (LLaMA 3.1 8B) first -> Gemini 2.0 Flash -> OpenAI GPT-4 -> Rule-based Fallback.
@@ -272,12 +272,12 @@ class KnowledgeGraphBuilder:
         return {
             "query_text": query_text,
             "source": source,
-            "entities": sorted(list(entities)),
-            "relations": sorted(list(relations)),
+            "entities": sorted(entities),
+            "relations": sorted(relations),
             "triples": formatted_triples
         }
 
-    def _parse_json_triples(self, raw_text: str) -> List[Dict[str, str]]:
+    def _parse_json_triples(self, raw_text: str) -> list[dict[str, str]]:
         """Helper to extract clean JSON array from LLM responses."""
         try:
             match = re.search(r'\[.*\]', raw_text, re.DOTALL)
