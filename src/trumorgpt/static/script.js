@@ -88,7 +88,7 @@ function renderFactCheckResult(data) {
     // Metrics
     document.getElementById('similarityScore').textContent = (data.metrics.accuracy_score || 0).toFixed(4);
     document.getElementById('tstIterations').textContent = `${data.metrics.tst_iterations || 1} iter (Converged)`;
-    document.getElementById('extractionEngine').textContent = data.query_knowledge_graph.source || 'Ollama (LLaMA 3.1:8B)';
+    document.getElementById('extractionEngine').textContent = data.query_knowledge_graph.source || 'Ollama (Local LLM (Ollama))';
 
     // Topic badge
     const evidenceTopic = document.getElementById('evidenceTopic');

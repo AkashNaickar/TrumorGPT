@@ -87,19 +87,34 @@ class TrumorGPTPipeline:
         # Step 4: Run GraphRAG Verification (Jaccard Similarity S(G_x, G_i))
         rag_results = self.graph_rag_engine.verify_query_graph(query_kg)
 
-        # Step 5: Format Concise Response Explanation (Paper Avg: 2.8 sentences)
+        # Step 5: Decide the verdict.
+        # Offline mode = deterministic GraphRAG-only (used by the evaluation harness).
+        # Online mode = ask an LLM judge first so arbitrary claims get an answer, then fall
+        # back to the knowledge-base verdict. The GraphRAG score/evidence is always reported.
         verdict = rag_results["verdict"]
         reasoning = rag_results["semantic_reasoning"]
         best_kg_topic = rag_results["best_matching_kg"].get("topic") if rag_results["best_matching_kg"] else "Public Health Database"
-
-        # Step 5b: LLM judge fallback for claims outside the knowledge base.
-        # Opt-in: skipped in offline mode. Only raises confidence via a reachable LLM backend;
-        # if no backend answers, the safe "Undetermined" verdict is kept.
         verdict_source = "GraphRAG knowledge base"
-        if verdict == "Undetermined" and os.getenv("TRUMORGPT_OFFLINE") != "1":
+        web_evidence = []
+
+        if os.getenv("TRUMORGPT_OFFLINE") != "1":
+            # Freshness fix: fetch current evidence so the judge is not limited to the
+            # sealed knowledge base (the paper's main drawback).
+            try:
+                from trumorgpt.web_retrieval import fetch_evidence
+                web_evidence = fetch_evidence(query_text)
+            except Exception:
+                web_evidence = []
+
+            evidence = list(web_evidence)
+            if rag_results.get("best_matching_kg"):
+                evidence.append({
+                    "title": "Knowledge graph: " + str(rag_results["best_matching_kg"].get("topic", "")),
+                    "snippet": reasoning,
+                })
             try:
                 from trumorgpt.llm_judge import LLMJudge
-                judged = LLMJudge().judge(query_text)
+                judged = LLMJudge().judge(query_text, evidence=evidence)
             except Exception:
                 judged = None
             if judged and judged.get("verdict") in ("True", "False"):
@@ -110,8 +125,8 @@ class TrumorGPTPipeline:
 
         if verdict_source.startswith("LLM judge"):
             explanation = (
-                f"The claim did not match the current health knowledge base, so it was judged by an "
-                f"LLM fallback: the statement is {verdict.lower()}. {reasoning}"
+                f"The claim was assessed by an LLM fact-checker grounded in retrieved evidence: "
+                f"the statement is {verdict.lower()}. {reasoning}"
             )
         elif verdict == "True":
             explanation = (
@@ -139,8 +154,10 @@ class TrumorGPTPipeline:
                 "tst_converged": tst_results.get("converged", True),
                 "total_sentences": len(sentences),
                 "key_sentences_extracted": key_sentences,
-                "verdict_source": verdict_source
+                "verdict_source": verdict_source,
+                "evidence_used": len(web_evidence),
             },
             "query_knowledge_graph": query_kg,
-            "evidence_knowledge_graph": rag_results["best_matching_kg"]
+            "web_evidence": web_evidence,
+            "evidence_knowledge_graph": rag_results["best_matching_kg"],
         }

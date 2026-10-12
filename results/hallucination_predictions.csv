@@ -1,0 +1,31 @@
+id,claim,gold,pred,source,evidence,latency_s
+train:6066.json,Says we are overcharging students . . . to help pay for the health care law.,True,Undetermined,GraphRAG knowledge base,2,13.6
+train:12502.json,"30,000 Arizonans may have no choice on Affordable Care Act coverage.",True,Undetermined,GraphRAG knowledge base,0,10.6
+train:1523.json,"""The costs for families (in the individual market) for the same type of coverage that they're currently receiving would go down 14 percent to 20 percent.""",True,Undetermined,GraphRAG knowledge base,2,10.9
+test:10448.json,"Insured Floridians pay about $2,000 for every hospital stay to cover the cost of the uninsured.",True,Undetermined,GraphRAG knowledge base,0,11.2
+train:3213.json,"Oregon families pay an extra $1,400 a year on higher insurance premiums to cover those who do not have insurance.",True,Undetermined,GraphRAG knowledge base,2,11.1
+valid:1539.json,"The Democrats' health care bills would end ""the denial of ... coverage to those who have a pre-existing condition,"" while the Republican bill would not.",True,Undetermined,GraphRAG knowledge base,2,13.5
+train:6180.json,"If youre one of the more than 250 million Americans who already have health insurance, you will keep your health insurance.",True,Undetermined,GraphRAG knowledge base,0,12.6
+train:1153.json,"If you're over 65 years old in America today, you have no choice but to be in Medicare. Even if you want out of Medicare, you have to forfeit your Social Security to get out of it.",True,False,LLM judge (Ollama (qwen2.5:7b-instruct)),2,16.9
+train:8951.json,The medical marijuana ballot initiative doesnt require a physician writing a prescription and can be for conditions like having a back that needs to be scratched.,True,Undetermined,GraphRAG knowledge base,0,11.0
+valid:2326.json,"Says the federal agency in charge of Medicare and Medicaid will disburse $803 billion in benefits this year, making it larger than all but 15 of the worlds economies.",True,Undetermined,GraphRAG knowledge base,0,12.6
+test:4929.json,"In 1993, Newt Gingrich first advocated for the individual mandate in health care. And as recently as May of this year, he was still advocating for it.",True,False,LLM judge (Ollama (qwen2.5:7b-instruct)),2,15.6
+train:4637.json,New Jerseys poverty rate has increased since this governor took office and the number of New Jerseyans without health insurance has risen.,True,Undetermined,GraphRAG knowledge base,2,12.8
+train:6607.json,Federal law adopted under Tommy Thompsons watch prohibits the government from negotiating for better prices on prescription drugs for senior citizens,True,Undetermined,GraphRAG knowledge base,1,14.5
+test:11288.json,Says Donald Trump wants to replace Obamacare with a single-payer system.,True,False,LLM judge (Ollama (qwen2.5:7b-instruct)),2,11.5
+train:3033.json,New provisions of the health care law bar the use offlexible spending accounts and health savings accounts to pay for aspirin and other non-prescription health needs.,True,Undetermined,GraphRAG knowledge base,0,15.3
+train:1132.json,AARP is endorsing the health care reform bill.,False,Undetermined,GraphRAG knowledge base,2,11.1
+train:1125.json,"During the 2005 fight over Social Security, there were noisy demonstrations but they were outside the events, and opponents were not disruptive crowds booed lines they didnt like, but that was about it.",False,False,LLM judge (Ollama (qwen2.5:7b-instruct)),2,11.7
+train:7518.json,"Eighty-five percent of Floridians who will benefit from expanding Medicaid are single, childless adults.",False,Undetermined,GraphRAG knowledge base,0,11.5
+valid:1122.json,"The health care reform plan would set limits similar to the socialized system in Britain, where people are allowed to die if their treatment would cost more than $22,000.",False,False,LLM judge (Ollama (qwen2.5:7b-instruct)),2,15.4
+train:9559.json,"Thanks to #ObamaCare, average E.R. wait in California is 5 hours.",False,False,LLM judge (Ollama (qwen2.5:7b-instruct)),2,13.9
+train:3590.json,Medicare passed with virtually no Republican support.,False,Undetermined,GraphRAG knowledge base,2,12.0
+valid:6802.json,"Brendan Doherty wants to repeal Obamacare, increasing drug prices for seniors.",False,Undetermined,GraphRAG knowledge base,0,9.9
+test:7135.json,"If you and I fail to defund ObamaCare now, some 16,000 new IRS agents will be begin prying into our private medical records, eyeing each and every one of our treatments and prescriptions for violations.",False,Undetermined,GraphRAG knowledge base,0,12.0
+train:1261.json,"An Iowa policy ""provides for a state round up of Iowa citizens who might be exposed to the swine flu virus.""",False,False,LLM judge (Ollama (qwen2.5:7b-instruct)),2,12.8
+train:1626.json,"""Joe, I keep hearing you every morning talking about the biggest tax increase in history, but you don't mention it's also the biggest tax cut in history.''",False,False,LLM judge (Ollama (qwen2.5:7b-instruct)),2,11.7
+test:6974.json,Says House Democrats voted to use your tax dollars for abortions by voting against bill defunding Planned Parenthood.,False,False,LLM judge (Ollama (qwen2.5:7b-instruct)),2,14.1
+train:8812.json,"Forty years ago, hardly anybody in the country had health insurance.",False,Undetermined,GraphRAG knowledge base,1,10.9
+train:3205.json,"When the Milwaukee County mental health facility is full, cops sit out there in their squad cars with a mentally ill patient and sometimes spend an entire shift out there doing that.",False,Undetermined,GraphRAG knowledge base,2,15.7
+train:6670.json,"Says under Oregon law, girls from 15 years of age and up are given complete control over whether to be sterilized or not.",False,Undetermined,GraphRAG knowledge base,2,13.4
+test:8419.json,Virtually every person across this country has seen premiums going up and up and up due to Obamacare.,False,Undetermined,GraphRAG knowledge base,2,11.4

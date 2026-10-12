@@ -1,0 +1,21 @@
+{
+  "n_per_condition": 30,
+  "A_plain_llm": {
+    "n": 30,
+    "accuracy_strict": 0.3,
+    "coverage": 0.5333,
+    "committed": 16,
+    "correct": 9,
+    "wrong": 7,
+    "hallucination_rate": 0.4375
+  },
+  "B_our_system": {
+    "n": 30,
+    "accuracy_strict": 0.2,
+    "coverage": 0.3,
+    "committed": 9,
+    "correct": 6,
+    "wrong": 3,
+    "hallucination_rate": 0.3333
+  }
+}

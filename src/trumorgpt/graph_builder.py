@@ -55,12 +55,12 @@ class KnowledgeGraphBuilder:
     def __init__(
         self,
         ollama_url: str = "http://localhost:11434",
-        ollama_model: str = "llama3.1:8b",
+        ollama_model: str | None = None,
         openai_api_key: str | None = None,
         gemini_api_key: str | None = None
     ):
         self.ollama_url = ollama_url
-        self.ollama_model = ollama_model
+        self.ollama_model = ollama_model or os.getenv("OLLAMA_MODEL", "qwen2.5:7b-instruct")
         self.openai_api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
         self.gemini_api_key = gemini_api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
