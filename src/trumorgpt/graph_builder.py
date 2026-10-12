@@ -63,6 +63,9 @@ class KnowledgeGraphBuilder:
         self.ollama_model = ollama_model or os.getenv("OLLAMA_MODEL", "qwen2.5:7b-instruct")
         self.openai_api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
         self.gemini_api_key = gemini_api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+        # Default to the deterministic rule-based extractor for speed and determinism.
+        # Set TRUMORGPT_LLM_EXTRACT=1 to use the LLM for triple extraction instead.
+        self.force_rules = os.getenv("TRUMORGPT_LLM_EXTRACT") != "1"
 
     def extract_triples_ollama(self, query_text: str) -> list[dict[str, str]]:
         """Extracts triples using local Ollama (llama3.1:8b)."""
@@ -230,7 +233,7 @@ class KnowledgeGraphBuilder:
         triples = None
         source = None
 
-        offline = os.getenv("TRUMORGPT_OFFLINE") == "1"
+        offline = os.getenv("TRUMORGPT_OFFLINE") == "1" or self.force_rules
 
         # 1. Try local Ollama (LLaMA 3.1 8B) first
         if not offline:

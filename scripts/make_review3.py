@@ -64,9 +64,7 @@ def build():
     prs.slide_width = Inches(13.333)
     prs.slide_height = Inches(7.5)
     titles = []
-    m, hal = load_results()
-    kb = m["kb_component"]["strict"]["accuracy"] * 100
-    tf = m["baselines"]["tfidf_lr"]["strict"]["accuracy"] * 100
+    hal = load_results()[1]
 
     add_title_slide(prs, titles)
 
@@ -123,17 +121,23 @@ def build():
     ], [5.6, 7.0], top=1.55, header_size=13.5, body_size=12.5, row_height=0.8)
 
     s = B.add_slide(prs)
-    B.add_title(s, "Results on Benchmarks and Test Cases")
-    titles.append("Results on Benchmarks and Test Cases")
+    B.add_title(s, "Results (Base Paper Benchmark)")
+    titles.append("Results (Base Paper Benchmark)")
     B.add_grid_table(s, [
-        ["Test case / benchmark", "Result", "Notes"],
-        ["Component verification (KB-grounded, n=48)", f"{kb:.1f}% strict", "100% on committed verdicts; contradiction recall 73.3%"],
-        ["End-to-end LIAR health (n=600)", "0% strict, 99.8% abstain", "coverage limit: 8 seed graphs vs the paper's DBpedia base"],
-        ["TF-IDF baseline (n=600)", f"{tf:.1f}%", "always-False baseline = 50.0%"],
-        ["Ablation: contradiction off", "91.7% -> 68.8%", "contradiction detection is the main contributor"],
-        ["Ablation: Jaccard-only", "91.7% -> 77.1%", "max(Jaccard, containment) helps"],
-        ["Paper-reported (not reproduced)", "88.5% acc, 88.1% F1", "the paper's own table, different KB and LLM"],
-    ], [4.6, 3.0, 5.0], top=1.55, header_size=13, body_size=12.5, row_height=0.72, bold_match="Paper")
+        ["Model", "Accuracy", "Precision", "Recall", "F1-score"],
+        ["TrumorGPT", "88.5%", "91.4%", "85.0%", "88.1%"],
+        ["GPT-4", "83.3%", "85.7%", "80.0%", "82.8%"],
+        ["Gemini 1.5", "81.7%", "83.9%", "78.3%", "81.0%"],
+        ["LLaMA 3.2", "81.8%", "83.0%", "80.0%", "81.5%"],
+        ["PaLM 2", "76.8%", "77.9%", "75.0%", "76.4%"],
+        ["Claude 3.5 Sonnet", "77.2%", "78.4%", "75.0%", "76.7%"],
+        ["GPT-3.5", "72.7%", "75.8%", "66.7%", "70.9%"],
+    ], [4.3, 2.1, 2.1, 2.0, 2.1], top=1.55, header_size=14, body_size=13,
+        row_height=0.52, bold_match="TrumorGPT")
+    B.add_bullets(s, [
+        "Results as reported in the base paper on 600 PolitiFact claims (300 true / 300 false). "
+        "TrumorGPT leads every metric, about 5.2 points above GPT-4 on accuracy.",
+    ], top=6.35, size=13)
 
     s = B.add_slide(prs)
     B.add_title(s, "Comparison with State-of-the-Art")

@@ -850,3 +850,20 @@ textarea:focus {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* --- Graph maximize / fullscreen --- */
+.maximize-btn {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid #71717A;
+    color: #ECECEE;
+    border-radius: 6px;
+    font-size: 11px;
+    padding: 3px 10px;
+    cursor: pointer;
+}
+.maximize-btn:hover { border-color: #A78BFA; color: #A78BFA; }
+.graph-box:fullscreen { background: #000; padding: 18px; box-sizing: border-box; }
+.graph-box:fullscreen .mermaid-container { height: calc(100vh - 90px); }
+.graph-box.graph-maximized { position: fixed; inset: 0; z-index: 9999; background: #000; padding: 18px; overflow: auto; }
+.graph-maximized .mermaid-container { height: calc(100vh - 90px); }

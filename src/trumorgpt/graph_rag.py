@@ -189,7 +189,10 @@ class GraphRAGEngine:
                     best_contradiction_found = True
                     best_contradiction_reason = reason
             else:
-                if sim_score > best_match_score or (sim_score == best_match_score and not best_contradiction_found):
+                # Only keep a reference graph when it actually overlaps the query
+                # (score > 0). Otherwise no evidence graph is reported, instead of
+                # defaulting to the first graph in the knowledge base.
+                if sim_score > 0 and sim_score > best_match_score:
                     best_match_score = sim_score
                     best_matching_kg = kg
                     best_contradiction_found = False

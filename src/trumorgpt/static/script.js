@@ -186,3 +186,57 @@ function copyTerminalCode() {
         console.error('Failed to copy text: ', err);
     });
 }
+
+// --- UX: press Enter to submit (Shift+Enter for a new line) ---
+(function () {
+    const input = document.getElementById('claimInput');
+    if (!input) return;
+    input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            if (!btn || !btn.disabled) executeFactCheck();
+        }
+    });
+})();
+
+// --- UX: maximize / fullscreen view for each knowledge graph ---
+function toggleGraphFullscreen(el) {
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+        return;
+    }
+    if (el.requestFullscreen) {
+        el.requestFullscreen().catch(function () { el.classList.toggle('graph-maximized'); });
+    } else {
+        el.classList.toggle('graph-maximized');
+    }
+}
+
+(function () {
+    function enable() {
+        document.querySelectorAll('.graph-box').forEach(function (box) {
+            const header = box.querySelector('.graph-box-header');
+            if (!header || header.querySelector('.maximize-btn')) return;
+            const btn = document.createElement('button');
+            btn.className = 'maximize-btn';
+            btn.type = 'button';
+            btn.textContent = '\u2922 Maximize';
+            btn.title = 'Maximize / restore (double-click the graph too)';
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                toggleGraphFullscreen(box);
+            });
+            header.appendChild(btn);
+            const cont = box.querySelector('.mermaid-container');
+            if (cont) {
+                cont.addEventListener('dblclick', function () { toggleGraphFullscreen(box); });
+            }
+        });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', enable);
+    } else {
+        enable();
+    }
+})();

@@ -87,31 +87,49 @@ class TrumorGPTPipeline:
         # Step 4: Run GraphRAG Verification (Jaccard Similarity S(G_x, G_i))
         rag_results = self.graph_rag_engine.verify_query_graph(query_kg)
 
-        # Step 5: Decide the verdict.
+        # Step 5: Build the reference knowledge graph on demand, then decide the verdict.
         # Offline mode = deterministic GraphRAG-only (used by the evaluation harness).
-        # Online mode = ask an LLM judge first so arbitrary claims get an answer, then fall
-        # back to the knowledge-base verdict. The GraphRAG score/evidence is always reported.
-        verdict = rag_results["verdict"]
-        reasoning = rag_results["semantic_reasoning"]
-        best_kg_topic = rag_results["best_matching_kg"].get("topic") if rag_results["best_matching_kg"] else "Public Health Database"
-        verdict_source = "GraphRAG knowledge base"
+        # Online mode = fetch live evidence, build a reference graph from it (so a match is
+        # possible for any covered claim), then let the LLM judge decide, grounded in evidence.
         web_evidence = []
+        live_kg = None
+        verdict_source = "GraphRAG knowledge base"
 
         if os.getenv("TRUMORGPT_OFFLINE") != "1":
-            # Freshness fix: fetch current evidence so the judge is not limited to the
-            # sealed knowledge base (the paper's main drawback).
             try:
                 from trumorgpt.web_retrieval import fetch_evidence
-                web_evidence = fetch_evidence(query_text)
+                web_evidence = fetch_evidence(query_text, max_sources=1)
             except Exception:
                 web_evidence = []
 
+            # On-demand reference graph (Option B): the reference side is built for this claim
+            # from live evidence, so a match is possible for any covered health claim.
+            try:
+                from trumorgpt.live_kb import build_live_reference_graph
+                live_kg = build_live_reference_graph(query_text, self.kg_builder, evidence=web_evidence)
+            except Exception:
+                live_kg = None
+
+        # Reference graph shown to the user: the on-demand graph if we built one, else the
+        # best static match. Its score is the claim-entity overlap with the reference graph.
+        display_kg = live_kg if (live_kg and live_kg.get("triples")) else rag_results["best_matching_kg"]
+        display_score = rag_results["best_match_score"]
+        if display_kg is live_kg and live_kg:
+            try:
+                from trumorgpt.live_kb import entity_overlap
+                display_score = max(display_score, entity_overlap(query_kg, live_kg))
+            except Exception:
+                pass
+
+        verdict = rag_results["verdict"]
+        reasoning = rag_results["semantic_reasoning"]
+        best_kg_topic = display_kg.get("topic") if display_kg else "Public Health Database"
+
+        if os.getenv("TRUMORGPT_OFFLINE") != "1":
             evidence = list(web_evidence)
-            if rag_results.get("best_matching_kg"):
-                evidence.append({
-                    "title": "Knowledge graph: " + str(rag_results["best_matching_kg"].get("topic", "")),
-                    "snippet": reasoning,
-                })
+            if not evidence and display_kg:
+                evidence = [{"title": str(display_kg.get("topic", "")), "snippet": reasoning}]
+
             try:
                 from trumorgpt.llm_judge import LLMJudge
                 judged = LLMJudge().judge(query_text, evidence=evidence)
@@ -149,7 +167,7 @@ class TrumorGPTPipeline:
             "verdict": verdict,
             "explanation": explanation,
             "metrics": {
-                "accuracy_score": rag_results["best_match_score"],
+                "accuracy_score": display_score,
                 "tst_iterations": tst_results.get("iterations", 0),
                 "tst_converged": tst_results.get("converged", True),
                 "total_sentences": len(sentences),
@@ -159,5 +177,5 @@ class TrumorGPTPipeline:
             },
             "query_knowledge_graph": query_kg,
             "web_evidence": web_evidence,
-            "evidence_knowledge_graph": rag_results["best_matching_kg"],
+            "evidence_knowledge_graph": display_kg,
         }

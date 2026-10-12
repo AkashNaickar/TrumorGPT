@@ -18,9 +18,9 @@ import requests
 
 SYSTEM = (
     "You are a careful medical fact-checker. Decide whether the claim is TRUE or FALSE. "
-    "Use UNDETERMINED only if it genuinely cannot be judged. When retrieved evidence is "
-    "provided, base your verdict on it. Answer exactly in two lines:\n"
-    "VERDICT: <True|False|Undetermined>\n"
+    "Use the retrieved evidence when it is relevant, and your medical knowledge otherwise. "
+    "Answer exactly in two lines:\n"
+    "VERDICT: <True|False>\n"
     "REASON: <one short sentence>"
 )
 POLLINATIONS_URL = "https://text.pollinations.ai/openai"
@@ -30,8 +30,8 @@ def build_prompt(claim: str, evidence=None) -> str:
     parts = [SYSTEM]
     if evidence:
         parts.append("Retrieved evidence:")
-        for e in evidence:
-            parts.append(f"- {e.get('title', '')}: {(e.get('snippet') or '')[:300]}")
+        for e in evidence[:2]:
+            parts.append(f"- {e.get('title', '')}: {(e.get('snippet') or '')[:200]}")
     parts.append("Claim: " + claim)
     return "\n".join(parts)
 
@@ -79,7 +79,8 @@ class LLMJudge:
     # -- backends ------------------------------------------------------------
     def _ollama(self, prompt):
         payload = {"model": self._pick_model(), "prompt": prompt, "stream": False,
-                   "options": {"temperature": 0.1}}
+                   "keep_alive": "30m",
+                   "options": {"temperature": 0.1, "num_predict": 96}}
         r = requests.post(f"{self.ollama_url}/api/generate", json=payload, timeout=120)
         if r.status_code == 200:
             return r.json().get("response", "")
