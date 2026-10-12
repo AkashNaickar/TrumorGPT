@@ -47,12 +47,7 @@ def add_title_slide(prs, titles):
     titles.append("Title")
 
 
-def build():
-    prs = Presentation()
-    prs.slide_width = Inches(13.333)
-    prs.slide_height = Inches(7.5)
-    titles = []
-
+def add_review3_slides(prs, titles):
     add_title_slide(prs, titles)
 
     s = B.add_slide(prs)
@@ -141,10 +136,19 @@ def build():
     ], size=18)
 
     B.set_document_properties(prs, "Capstone Project - Review 3")
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    prs.save(OUT)
-    B.scrub_package(OUT, titles)
-    print("Saved:", OUT, "slides:", len(prs.slides))
+
+
+def build(out=None):
+    prs = Presentation()
+    prs.slide_width = Inches(13.333)
+    prs.slide_height = Inches(7.5)
+    titles = []
+    add_review3_slides(prs, titles)
+    out = out or OUT
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    prs.save(out)
+    B.scrub_package(out, titles)
+    print("Saved:", out, "slides:", len(prs.slides))
 
 
 if __name__ == "__main__":
