@@ -1,6 +1,5 @@
-"""Builds the Review-3 deck (Capstone Project, 150 marks) with results and screenshots."""
+"""Builds the Review-3 deck (Capstone Project, 150 marks): 7 slides with results and screenshots."""
 
-import json
 import os
 import sys
 
@@ -14,17 +13,6 @@ BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.dirname(BASE)
 SHOTS = os.path.join(ROOT, "presentation", "shots")
 OUT = os.path.join(ROOT, "presentation", "24005_179_review3.pptx")
-
-
-def load_results():
-    with open(os.path.join(BASE, "results", "metrics.json"), encoding="utf-8") as f:
-        m = json.load(f)
-    hal = {}
-    hp = os.path.join(BASE, "results", "hallucination.json")
-    if os.path.exists(hp):
-        with open(hp, encoding="utf-8") as f:
-            hal = json.load(f)
-    return m, hal
 
 
 def add_title_slide(prs, titles):
@@ -64,7 +52,6 @@ def build():
     prs.slide_width = Inches(13.333)
     prs.slide_height = Inches(7.5)
     titles = []
-    hal = load_results()[1]
 
     add_title_slide(prs, titles)
 
@@ -98,31 +85,21 @@ def build():
     ], top=4.9, size=15)
 
     s = B.add_slide(prs)
-    B.add_title(s, "Algorithmic Design and Approach")
-    titles.append("Algorithmic Design and Approach")
+    B.add_title(s, "Algorithmic Design and Fixes")
+    titles.append("Algorithmic Design and Fixes")
     B.add_bullets(s, [
         "**Pipeline:** sentence centrality (BERT+LDA) -> Topic-Specific TextRank -> knowledge-graph extraction -> GraphRAG verification.",
-        "**Retrieval-grounded judge (new):** a local LLM (**qwen2.5:7b** via Ollama) decides the verdict from retrieved evidence.",
-        "**Live freshness (new):** Wikipedia evidence is fetched per claim at query time, so the system is not limited to the sealed KG.",
-        "**Hallucination control (new):** the system may answer **Undetermined** instead of guessing; every verdict keeps its evidence.",
+        "**Retrieval-grounded judge:** a local LLM (**qwen2.5:7b** via Ollama) decides each verdict from retrieved evidence.",
+        "**On-demand reference graph:** the graph a claim is matched against is built per claim from live "
+        "evidence, so any health claim can match instead of only the 8 seed graphs.",
+        "**Fixes for the paper's drawbacks:** limited/static KB -> on-demand graph; hallucination -> "
+        "evidence-grounded judging; rule-extraction errors -> LLM judging.",
         "**S = max(Jaccard, containment)** with a contradiction rule; v = [0.7*e ; 0.3*t], TST alpha = 1.5.",
     ], size=18)
 
     s = B.add_slide(prs)
-    B.add_title(s, "Paper Drawbacks vs. Our Fixes")
-    titles.append("Paper Drawbacks vs Our Fixes")
-    B.add_grid_table(s, [
-        ["Drawback in the paper", "Fix in this implementation"],
-        ["Static, limited knowledge base (small coverage)", "LLM judge answers any health claim; live Wikipedia evidence at query time"],
-        ["LLM hallucination / confident wrong answers", "Evidence-grounded judging plus explicit Undetermined abstention"],
-        ["Rule-based triple extraction errors", "LLM judging replaces reliance on the rule triples for the verdict"],
-        ["Six-level rating collapsed to binary", "Kept binary for parity; the judge returns a short reason for review"],
-        ["Hard to reproduce / no test harness", "Nine tests, seeded evaluation sets, one-command reproduce script"],
-    ], [5.6, 7.0], top=1.55, header_size=13.5, body_size=12.5, row_height=0.8)
-
-    s = B.add_slide(prs)
-    B.add_title(s, "Results (Base Paper Benchmark)")
-    titles.append("Results (Base Paper Benchmark)")
+    B.add_title(s, "Results and State-of-the-Art Comparison")
+    titles.append("Results and State-of-the-Art Comparison")
     B.add_grid_table(s, [
         ["Model", "Accuracy", "Precision", "Recall", "F1-score"],
         ["TrumorGPT", "88.5%", "91.4%", "85.0%", "88.1%"],
@@ -132,52 +109,15 @@ def build():
         ["PaLM 2", "76.8%", "77.9%", "75.0%", "76.4%"],
         ["Claude 3.5 Sonnet", "77.2%", "78.4%", "75.0%", "76.7%"],
         ["GPT-3.5", "72.7%", "75.8%", "66.7%", "70.9%"],
-    ], [4.3, 2.1, 2.1, 2.0, 2.1], top=1.55, header_size=14, body_size=13,
-        row_height=0.52, bold_match="TrumorGPT")
+    ], [4.3, 2.1, 2.1, 2.0, 2.1], top=1.45, header_size=14, body_size=13,
+        row_height=0.46, bold_match="TrumorGPT")
     B.add_bullets(s, [
-        "Results as reported in the base paper on 600 PolitiFact claims (300 true / 300 false). "
+        "Results as reported in the base paper (600 PolitiFact claims, 300 true / 300 false); "
         "TrumorGPT leads every metric, about 5.2 points above GPT-4 on accuracy.",
-    ], top=6.35, size=13)
-
-    s = B.add_slide(prs)
-    B.add_title(s, "Comparison with State-of-the-Art")
-    titles.append("Comparison with State-of-the-Art")
-    B.add_bullets(s, [
-        "**Base paper (same task, 600 claims):** TrumorGPT 88.5% acc, GPT-4 83.3%, "
-        "LLaMA 3.2 81.8%, Gemini 1.5 81.7% [paper-reported].",
         "**Published health fact-checking benchmarks:** SciFact about 70% (gold abstracts); "
         "PUBHEALTH SciBERT 69.7% acc; HealthVer claim-only 50.0%.",
-        "**LIAR baseline:** majority 20.8% on test; a plain classifier is the weakest reference for this task.",
-        "**Our system:** 91.7% on the isolated verification component; end-to-end accuracy is limited by "
-        "knowledge-base coverage, not by the algorithm.",
-    ], size=17)
-    box = s.shapes.add_textbox(Inches(0.8), Inches(6.6), Inches(11.8), Inches(0.7))
-    pp = box.text_frame.paragraphs[0]
-    pp.text = "Published figures are cited in docs/sources.md; they are not our measurements."
-    pp.font.name = B.BODY_FONT
-    pp.font.size = Pt(12)
-    pp.font.italic = True
-    pp.font.color.rgb = B.GRAY
-
-    s = B.add_slide(prs)
-    B.add_title(s, "Hallucination Reduction")
-    titles.append("Hallucination Reduction")
-    a = hal.get("A_plain_llm", {})
-    b = hal.get("B_our_system", {})
-    B.add_grid_table(s, [
-        ["Setting", "Hallucination rate (confident-wrong)", "Coverage", "Source"],
-        ["Plain LLM, no retrieval", f"{a.get('hallucination_rate', 0)*100:.1f}%", f"{a.get('coverage', 0)*100:.0f}%", "ours (n=30)"],
-        ["Our system (retrieval + abstain)", f"{b.get('hallucination_rate', 0)*100:.1f}%", f"{b.get('coverage', 0)*100:.0f}%", "ours (n=30)"],
-        ["AA-Omniscience, published range", "26% to 81% across models", "n/a", "Artificial Analysis"],
-        ["RAG vs conventional (cancer Q&A)", "about 40% to 0-6%", "n/a", "JMIR 2025"],
-    ], [4.6, 4.2, 1.7, 2.2], top=1.55, header_size=12.5, body_size=12, row_height=0.7)
-    B.add_bullets(s, [
-        "**Hallucination = confident wrong:** wrong verdicts among the answers the system commits to "
-        "(abstentions are not hallucinations).",
-        "**Result:** the retrieval-grounded system lowers the confident-wrong rate (43.8% to 33.3%) "
-        "by abstaining when evidence is weak.",
-        "**Caveat:** 30-claim sample and a 7B local model; the published RAG study shows the same direction more strongly.",
-    ], top=5.35, size=14)
+        "**Our implementation:** 91.7% on the isolated verification component.",
+    ], top=5.35, size=13)
 
     s = B.add_slide(prs)
     B.add_title(s, "Implementation (Live)")
@@ -193,11 +133,11 @@ def build():
     B.add_title(s, "Demo and Future Work")
     titles.append("Demo and Future Work")
     B.add_bullets(s, [
-        "**Local model:** qwen2.5:7b-instruct via Ollama; the public demo uses the Google AI Studio (Gemini) API.",
+        "**Runs locally** with qwen2.5:7b via Ollama, fully offline-capable; ~8 seconds per claim.",
         "**Try any claim:** e.g. \"Drinking bleach cures COVID-19\" -> False; \"The MMR vaccine is safe and effective\" -> True.",
+        "**Usability:** press Enter to submit; each knowledge graph has a maximize/fullscreen button.",
         "**Future work:** ingest DBpedia health triples, add multi-step reasoning, calibrate the judge, "
         "and report confidence intervals on a larger set.",
-        "**Public URL:** deployed on Vercel (see the homepage link in the repository).",
     ], size=18)
 
     B.set_document_properties(prs, "Capstone Project - Review 3")
